@@ -3,6 +3,7 @@ package net.minecraftforge.client.model.animation;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
@@ -96,7 +97,7 @@ public enum Animation implements IResourceManagerReloadListener
     {
         try
         {
-            IResource resource = null;
+            IResource resource;
             try
             {
                 resource = manager.getResource(armatureLocation);
@@ -106,9 +107,7 @@ public enum Animation implements IResourceManagerReloadListener
                 // this is normal. FIXME: error reporting?
                 return defaultModelBlockAnimation;
             }
-            ModelBlockAnimation mba = mbaGson.fromJson(new InputStreamReader(resource.getInputStream(), "UTF-8"), ModelBlockAnimation.class);
-            String json = mbaGson.toJson(mba);
-            return mba;
+            return mbaGson.fromJson(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8), ModelBlockAnimation.class);
         }
         catch(IOException e)
         {

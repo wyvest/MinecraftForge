@@ -33,15 +33,16 @@ import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
 public class ClassPatchManager {
-    public static final ClassPatchManager INSTANCE = new ClassPatchManager();
 
     public static final boolean dumpPatched = Boolean.parseBoolean(System.getProperty("fml.dumpPatchedClasses", "false"));
     public static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("fml.debugClassPatchManager", "false"));
 
-    private GDiffPatcher patcher = new GDiffPatcher();
+    public static final ClassPatchManager INSTANCE = new ClassPatchManager();
+
+    private final GDiffPatcher patcher = new GDiffPatcher();
     private ListMultimap<String, ClassPatch> patches;
 
-    private Map<String,byte[]> patchedClasses = Maps.newHashMap();
+    private final Map<String,byte[]> patchedClasses = Maps.newHashMap();
     private File tempDir;
     private ClassPatchManager()
     {

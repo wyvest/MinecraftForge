@@ -33,7 +33,7 @@ import com.google.common.collect.Lists;
 
 public class DirectoryDiscoverer implements ITypeDiscoverer
 {
-    private class ClassFilter implements FileFilter
+    private static class ClassFilter implements FileFilter
     {
         @Override
         public boolean accept(File file)

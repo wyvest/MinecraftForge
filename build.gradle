@@ -9,9 +9,10 @@ buildscript {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
+        maven { url "https://jitpack.io" }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+        classpath 'com.github.asbyth:ForgeGradle:2e00f20bf2'
     }
 }
 
@@ -201,7 +202,7 @@ launch4j {
     outfile = file("build/distributions/${project.name}-${project.version}-installer-win.exe").canonicalPath
     icon = file('icon.ico').canonicalPath
     manifest = file('l4jManifest.xml').canonicalPath
-    jreMinVersion = '1.6.0'
+    jreMinVersion = '1.8.0'
     initialHeapPercent = 5;
     maxHeapPercent = 100;
 }

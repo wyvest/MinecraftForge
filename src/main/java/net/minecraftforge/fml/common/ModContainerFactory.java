@@ -30,7 +30,6 @@ import com.google.common.collect.Maps;
 public class ModContainerFactory
 {
     public static Map<Type, Constructor<? extends ModContainer>> modTypes = Maps.newHashMap();
-    private static Pattern modClass = Pattern.compile(".*(\\.|)(mod\\_[^\\s$]+)$");
     private static ModContainerFactory INSTANCE = new ModContainerFactory();
 
     private ModContainerFactory() {
@@ -54,21 +53,6 @@ public class ModContainerFactory
     public ModContainer build(ASMModParser modParser, File modSource, ModCandidate container)
     {
         String className = modParser.getASMType().getClassName();
-        if (modParser.isBaseMod(container.getRememberedBaseMods()) && modClass.matcher(className).find())
-        {
-            FMLLog.severe("Found a BaseMod type mod %s", className);
-            FMLLog.severe("This will not be loaded and will be ignored. ModLoader mechanisms are no longer available.");
-        }
-        else if (modClass.matcher(className).find())
-        {
-            FMLLog.fine("Identified a class %s following modloader naming convention but not directly a BaseMod or currently seen subclass", className);
-            container.rememberModCandidateType(modParser);
-        }
-        else if (modParser.isBaseMod(container.getRememberedBaseMods()))
-        {
-            FMLLog.fine("Found a basemod %s of non-standard naming format", className);
-            container.rememberBaseModType(className);
-        }
 
         for (ModAnnotation ann : modParser.getAnnotations())
         {

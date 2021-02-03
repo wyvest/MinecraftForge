@@ -38,7 +38,6 @@ public class ASMModParser
     private int classVersion;
     private Type asmSuperType;
     private LinkedList<ModAnnotation> annotations = Lists.newLinkedList();
-    private String baseModProperties;
 
     static enum AnnotationType
     {
@@ -91,8 +90,6 @@ public class ASMModParser
                 .add("classVersion", classVersion)
                 .add("superName", asmSuperType.getClassName())
                 .add("annotations", annotations)
-                .add("isBaseMod", isBaseMod(Collections.<String>emptyList()))
-                .add("baseModProperties", baseModProperties)
                 .toString();
     }
 
@@ -123,21 +120,6 @@ public class ASMModParser
 //
 //            throw new LoaderException(new RuntimeException("Mod compiled for Java 7 detected"));
 //        }
-    }
-
-    public boolean isBaseMod(List<String> rememberedTypes)
-    {
-        return getASMSuperType().equals(Type.getType("LBaseMod;")) || getASMSuperType().equals(Type.getType("Lnet/minecraft/src/BaseMod;"))|| rememberedTypes.contains(getASMSuperType().getClassName());
-    }
-
-    public void setBaseModProperties(String foundProperties)
-    {
-        this.baseModProperties = foundProperties;
-    }
-
-    public String getBaseModProperties()
-    {
-        return this.baseModProperties;
     }
 
     public void sendToTable(ASMDataTable table, ModCandidate candidate)
