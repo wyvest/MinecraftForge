@@ -15,6 +15,8 @@ package net.minecraftforge.fml.common.discovery;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collector;
 
 import net.minecraftforge.fml.common.ModContainer;
 
@@ -26,6 +28,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class ASMDataTable
 {
@@ -93,7 +96,7 @@ public class ASMDataTable
             return container.getSource().equals(data.candidate.getModContainer());
         }
     }
-    private SetMultimap<String, ASMData> globalAnnotationData = HashMultimap.create();
+    private final SetMultimap<String, ASMData> globalAnnotationData = HashMultimap.create();
     private Map<ModContainer, SetMultimap<String,ASMData>> containerAnnotationData;
 
     private List<ModContainer> containers = Lists.newArrayList();
@@ -101,17 +104,21 @@ public class ASMDataTable
 
     public SetMultimap<String,ASMData> getAnnotationsFor(ModContainer container)
     {
-        if (containerAnnotationData == null)
-        {
-            ImmutableMap.Builder<ModContainer, SetMultimap<String, ASMData>> mapBuilder = ImmutableMap.<ModContainer, SetMultimap<String,ASMData>>builder();
-            for (ModContainer cont : containers)
-            {
-                Multimap<String, ASMData> values = Multimaps.filterValues(globalAnnotationData, new ModContainerPredicate(cont));
-                mapBuilder.put(cont, ImmutableSetMultimap.copyOf(values));
-            }
-            containerAnnotationData = mapBuilder.build();
+        if (containerAnnotationData == null) {
+            containerAnnotationData = containers.parallelStream()
+                .map(cont -> Pair.of(cont, ImmutableSetMultimap.copyOf(Multimaps.filterValues(globalAnnotationData, new ModContainerPredicate(cont)))))
+                .collect(toImmutableMap(Pair::getKey, Pair::getValue));
         }
+
         return containerAnnotationData.get(container);
+    }
+
+    public static <T, K, V> Collector<T, ?, ImmutableMap<K, V>> toImmutableMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {
+        return Collector.of(
+            ImmutableMap.Builder<K, V>::new,
+            (builder, entry) -> builder.put(keyMapper.apply(entry), valueMapper.apply(entry)),
+            (leftBuild, rightBuild) -> leftBuild.putAll(rightBuild.build()),
+            ImmutableMap.Builder::build);
     }
 
     public Set<ASMData> getAll(String annotation)
