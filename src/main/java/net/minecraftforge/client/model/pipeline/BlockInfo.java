@@ -154,12 +154,12 @@ public class BlockInfo
     public void updateFlatLighting()
     {
         full = block.isFullCube();
-        packed[0] = block.getLightValue(world, blockPos);
+        packed[0] = block.getMixedBrightnessForBlock(world, blockPos);
 
         for (EnumFacing side : SIDES)
         {
             int i = side.ordinal() + 1;
-            packed[i] = block.getLightValue(world, blockPos.offset(side));
+            packed[i] = block.getMixedBrightnessForBlock(world, blockPos.offset(side));
         }
     }
 
