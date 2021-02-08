@@ -111,7 +111,7 @@ public class BlockInfo
         }
             for(EnumFacing side : SIDES)
             {
-                if (block.doesSideBlockRendering(world, blockPos, side)) {
+                if (!block.doesSideBlockRendering(world, blockPos, side)) {
                     int x = side.getFrontOffsetX() + 1;
                     int y = side.getFrontOffsetY() + 1;
                     int z = side.getFrontOffsetZ() + 1;
