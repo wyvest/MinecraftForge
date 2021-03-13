@@ -11,18 +11,17 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.IColoredBakedQuad;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class LightUtil
 {
-    private static final float s2 = (float)Math.pow(2, .5);
 
     public static float diffuseLight(float x, float y, float z)
     {
-        float y1 = y + 3 - 2 * s2;
-        return (x * x * 0.6f + (y1 * y1 * (3 + 2 * s2)) / 8 + z * z * 0.8f);
+        return Math.min(x * x * 0.6f + y * y * ((3f + y) / 4f) + z * z * 0.8f, 1f);
     }
 
     public static float diffuseLight(EnumFacing side)
@@ -71,17 +70,7 @@ public class LightUtil
         }
     }
 
-    private static final LoadingCache<VertexFormat, int[]> formatMaps = CacheBuilder.newBuilder()
-        .maximumSize(10)
-        .build(new CacheLoader<VertexFormat, int[]>()
-        {
-            public int[] load(VertexFormat format)
-            {
-                return mapFormats(format, DefaultVertexFormats.ITEM);
-            }
-        });
-
-    private static final int itemCount = DefaultVertexFormats.ITEM.getElementCount();
+    private static final ConcurrentMap<Pair<VertexFormat, VertexFormat>, int[]> formatMaps = new ConcurrentHashMap<>();
 
     public static void putBakedQuad(IVertexConsumer consumer, BakedQuad quad)
     {
@@ -94,18 +83,19 @@ public class LightUtil
         {
             consumer.setQuadColored();
         }
-        //int[] eMap = mapFormats(consumer.getVertexFormat(), DefaultVertexFormats.ITEM);
         float[] data = new float[4];
-        VertexFormat format = consumer.getVertexFormat();
-        int count = format.getElementCount();
-        int[] eMap = formatMaps.getUnchecked(format);
+        VertexFormat formatFrom = consumer.getVertexFormat();
+        VertexFormat formatTo = quad.getFormat();
+        int countFrom = formatFrom.getElementCount();
+        int countTo = formatTo.getElementCount();
+        int[] eMap = mapFormats(formatFrom, formatTo);
         for(int v = 0; v < 4; v++)
         {
-            for(int e = 0; e < count; e++)
+            for(int e = 0; e < countFrom; e++)
             {
-                if(eMap[e] != itemCount)
+                if(eMap[e] != countTo)
                 {
-                    unpack(quad.getVertexData(), data, DefaultVertexFormats.ITEM, v, eMap[e]);
+                    unpack(quad.getVertexData(), data, formatTo, v, eMap[e]);
                     consumer.put(e, data);
                 }
                 else
@@ -116,7 +106,18 @@ public class LightUtil
         }
     }
 
+    private static final VertexFormat DEFAULT_FROM = VertexLighterFlat.withNormal(DefaultVertexFormats.BLOCK);
+    private static final VertexFormat DEFAULT_TO = DefaultVertexFormats.ITEM;
+    private static final int[] DEFAULT_MAPPING = generateMapping(DEFAULT_FROM, DEFAULT_TO);
+
     public static int[] mapFormats(VertexFormat from, VertexFormat to)
+    {
+        if (from.equals(DEFAULT_FROM) && to.equals(DEFAULT_TO))
+            return DEFAULT_MAPPING;
+        return formatMaps.computeIfAbsent(Pair.of(from, to), pair -> generateMapping(pair.getLeft(), pair.getRight()));
+    }
+
+    private static int[] generateMapping(VertexFormat from, VertexFormat to)
     {
         int fromCount = from.getElementCount();
         int toCount = to.getElementCount();
@@ -141,7 +142,7 @@ public class LightUtil
 
     public static void unpack(int[] from, float[] to, VertexFormat formatFrom, int v, int e)
     {
-        int length = 4 < to.length ? 4 : to.length;
+        int length = Math.min(4, to.length);
         VertexFormatElement element = formatFrom.getElement(e);
         int vertexStart = v * formatFrom.getNextOffset() + formatFrom.func_181720_d(e);
         int count = element.getElementCount();
@@ -162,29 +163,26 @@ public class LightUtil
                     bits |= from[index + 1] << ((4 - offset) * 8);
                 }
                 bits &= mask;
-                if(type == VertexFormatElement.EnumType.FLOAT)
-                {
-                    to[i] = Float.intBitsToFloat(bits);
-                }
-                else if(type == VertexFormatElement.EnumType.UBYTE || type == VertexFormatElement.EnumType.USHORT)
-                {
-                    to[i] = (float)bits / mask;
-                }
-                else if(type == VertexFormatElement.EnumType.UINT)
-                {
-                    to[i] = (float)((double)(bits & 0xFFFFFFFFL) / 0xFFFFFFFFL);
-                }
-                else if(type == VertexFormatElement.EnumType.BYTE)
-                {
-                    to[i] = ((float)(byte)bits) / mask * 2;
-                }
-                else if(type == VertexFormatElement.EnumType.SHORT)
-                {
-                    to[i] = ((float)(short)bits) / mask * 2;
-                }
-                else if(type == VertexFormatElement.EnumType.INT)
-                {
-                    to[i] = ((float)(bits & 0xFFFFFFFFL)) / 0xFFFFFFFFL * 2;
+                switch (type) {
+                    case FLOAT:
+                        to[i] = Float.intBitsToFloat(bits);
+                        break;
+                    case UBYTE:
+                    case USHORT:
+                        to[i] = (float) bits / mask;
+                        break;
+                    case UINT:
+                        to[i] = (float) ((double) (bits & 0xFFFFFFFFL) / 0xFFFFFFFFL);
+                        break;
+                    case BYTE:
+                        to[i] = ((float) (byte) bits) / mask * 2;
+                        break;
+                    case SHORT:
+                        to[i] = ((float) (short) bits) / mask * 2;
+                        break;
+                    case INT:
+                        to[i] = ((float) (bits & 0xFFFFFFFFL)) / 0xFFFFFFFFL * 2;
+                        break;
                 }
             }
             else
@@ -217,8 +215,8 @@ public class LightUtil
                 }
                 else if(
                     type == VertexFormatElement.EnumType.UBYTE ||
-                    type == VertexFormatElement.EnumType.USHORT ||
-                    type == VertexFormatElement.EnumType.UINT
+                        type == VertexFormatElement.EnumType.USHORT ||
+                        type == VertexFormatElement.EnumType.UINT
                 )
                 {
                     bits = (int)(f * mask);

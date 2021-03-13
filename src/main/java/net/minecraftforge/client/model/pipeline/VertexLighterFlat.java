@@ -4,6 +4,7 @@ import javax.vecmath.Vector3f;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.BlockPos;
@@ -77,7 +78,17 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         updateIndices();
     }
 
-    private static VertexFormat withNormal(VertexFormat format)
+    private static final VertexFormat BLOCK_WITH_NORMAL = withNormalUncached(DefaultVertexFormats.BLOCK);
+
+    static VertexFormat withNormal(VertexFormat format)
+    {
+        //This is the case in 99.99%. Cache the value, so we don't have to redo it every time, and the speed up the equals check in LightUtil
+        if (format == DefaultVertexFormats.BLOCK)
+            return BLOCK_WITH_NORMAL;
+        return withNormalUncached(format);
+    }
+
+    private static VertexFormat withNormalUncached(VertexFormat format)
     {
         if (format == null || format.hasNormal()) return format;
         return new VertexFormat(format).addElement(NORMAL_4F);
@@ -93,8 +104,8 @@ public class VertexLighterFlat extends QuadGatheringTransformer
 
         if(normalIndex != -1 && (
             quadData[normalIndex][0][0] != -1 ||
-            quadData[normalIndex][0][1] != -1 ||
-            quadData[normalIndex][0][2] != -1))
+                quadData[normalIndex][0][1] != -1 ||
+                quadData[normalIndex][0][2] != -1))
         {
             normal = quadData[normalIndex];
         }

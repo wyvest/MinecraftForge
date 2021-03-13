@@ -1,6 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/block/model/BakedQuad.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/BakedQuad.java
-@@ -5,8 +5,9 @@
+@@ -1,23 +1,37 @@
+ package net.minecraft.client.renderer.block.model;
+ 
++import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
++import net.minecraft.client.renderer.vertex.VertexFormat;
+ import net.minecraft.util.EnumFacing;
+ import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  
  @SideOnly(Side.CLIENT)
@@ -11,3 +17,28 @@
      protected final int[] field_178215_a;
      protected final int field_178213_b;
      protected final EnumFacing field_178214_c;
++    protected final VertexFormat format;
+ 
+     public BakedQuad(int[] p_i46232_1_, int p_i46232_2_, EnumFacing p_i46232_3_)
+     {
+-        this.field_178215_a = p_i46232_1_;
+-        this.field_178213_b = p_i46232_2_;
+-        this.field_178214_c = p_i46232_3_;
++        this(p_i46232_1_, p_i46232_2_, p_i46232_3_, DefaultVertexFormats.field_176599_b);
+     }
+ 
++    public BakedQuad(int[] vertexDataIn, int tintIndexIn, EnumFacing faceIn, VertexFormat format)
++    {
++        this.format = format;
++        this.field_178215_a = vertexDataIn;
++        this.field_178213_b = tintIndexIn;
++        this.field_178214_c = faceIn;
++    }
++
++    public VertexFormat getFormat() {
++        return format;
++    }
++
+     public int[] func_178209_a()
+     {
+         return this.field_178215_a;

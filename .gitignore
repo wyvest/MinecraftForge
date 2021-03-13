@@ -31,3 +31,4 @@ changelog.txt
 *.7z
 
 /run
+/out
