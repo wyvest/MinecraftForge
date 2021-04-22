@@ -78,8 +78,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
 
-import javax.annotation.Nonnull;
-
 @SuppressWarnings("ALL")
 public class ModelLoader extends ModelBakery
 {
@@ -106,7 +104,6 @@ public class ModelLoader extends ModelBakery
         ModelLoaderRegistry.clearModelCache();
     }
 
-    @Nonnull
     @Override
     public IRegistry<ModelResourceLocation, IBakedModel> setupModelRegistry()
     {
