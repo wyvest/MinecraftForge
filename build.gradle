@@ -12,7 +12,7 @@ buildscript {
         maven { url "https://jitpack.io" }
     }
     dependencies {
-        classpath 'com.github.asbyth:ForgeGradle:cd20e159da'
+        classpath 'com.github.asbyth:ForgeGradle:f6500bf402'
     }
 }
 
@@ -24,7 +24,6 @@ repositories {
 }
 apply plugin: "maven"
 apply plugin: "net.minecraftforge.gradle.patcher"
-apply plugin: "net.minecraftforge.gradle.launch4j"
 
 minecraft {
     version = "1.8.9"
@@ -194,28 +193,6 @@ task makeMdk(type: Zip) {
     }
 }
 tasks.build.dependsOn makeMdk
-
-// launch4j
-
-launch4j {
-    jar = installer.archivePath.canonicalPath
-    outfile = file("build/distributions/${project.name}-${project.version}-installer-win.exe").canonicalPath
-    icon = file('icon.ico').canonicalPath
-    manifest = file('l4jManifest.xml').canonicalPath
-    jreMinVersion = '1.8.0'
-    initialHeapPercent = 5;
-    maxHeapPercent = 100;
-}
-tasks.generateXmlConfig.dependsOn installer
-tasks.build.dependsOn 'launch4j'
-
-// MAVEN
-
-artifacts {
-    archives changelog.output
-    archives file("build/distributions/${project.name}-${project.version}-installer-win.exe")
-    archives makeMdk
-}
 
 task ciWriteBuildNumber << {
     def file = file("src/main/java/net/minecraftforge/common/ForgeVersion.java");

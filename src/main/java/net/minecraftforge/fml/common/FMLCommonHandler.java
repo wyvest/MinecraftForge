@@ -218,7 +218,7 @@ public class FMLCommonHandler
             Builder<String> brd = ImmutableList.<String>builder();
             brd.add(Loader.instance().getMCVersionString());
             brd.add(Loader.instance().getMCPVersionString());
-            brd.add("Powered by (asbyth) Forge " + ForgeVersion.getVersion());
+            brd.add("Powered by (asbyth-1) Forge " + ForgeVersion.getVersion());
             if (sidedDelegate!=null)
             {
                 brd.addAll(sidedDelegate.getAdditionalBrandingInformation());
