@@ -12,11 +12,10 @@ buildscript {
         maven { url "https://jitpack.io" }
     }
     dependencies {
-        classpath 'com.github.asbyth:ForgeGradle:7f4bab690a'
+        classpath 'com.github.asbyth:ForgeGradle:90a2293982'
     }
 }
 
-apply plugin: "maven"
 apply plugin: "net.minecraftforge.gradle.patcher"
 
 minecraft {
@@ -146,7 +145,7 @@ task signUniversal(type: SignJar, dependsOn: 'outputJar') {
     inputFile = outputJar.archivePath
     outputFile = outputJar.archivePath
 }
-uploadArchives.dependsOn signUniversal
+
 build.dependsOn signUniversal
 installer.dependsOn signUniversal
 
@@ -184,74 +183,6 @@ task makeMdk(type: Zip) {
     }
 }
 tasks.build.dependsOn makeMdk
-
-uploadArchives {
-    repositories.mavenDeployer {
-
-        dependsOn 'build'
-
-        if (project.hasProperty('forgeMavenPass'))
-        {
-            repository(url: "http://files.minecraftforge.net/maven/manage/upload") {
-                authentication(userName: "forge", password: project.getProperty('forgeMavenPass')) // the elvis operator. look it up.
-            }
-        }
-        else
-        {
-            // local repo folder. Might wanna juset use  gradle install   if you wanans end it to maven-local
-            repository(url: 'file://localhost/' + project.file('repo').getAbsolutePath())
-        }
-
-        pom {
-            groupId = project.group
-            version = project.version
-            artifactId = project.archivesBaseName
-            project {
-                name project.archivesBaseName
-                packaging 'jar'
-                description 'Minecraft Forge API'
-                url 'https://github.com/MinecraftForge/MinecraftForge'
-
-                scm {
-                    url 'https://github.com/MinecraftForge/MinecraftForge'
-                    connection 'scm:git:git://github.com/MinecraftForge/MinecraftForge.git'
-                    developerConnection 'scm:git:git@github.com:MinecraftForge/MinecraftForge.git'
-                }
-
-                issueManagement {
-                    system 'github'
-                    url 'https://github.com/MinecraftForge/MinecraftForge/issues'
-                }
-
-                licenses {
-                    license {
-                        name 'Forge Public License'
-                        url 'https://raw.github.com/MinecraftForge/MinecraftForge/master/MinecraftForge-License.txt'
-                        distribution 'repo'
-                    }
-                }
-
-                developers {
-                    developer {
-                        id 'cpw'
-                        name 'cpw'
-                        roles { role 'developer' }
-                    }
-                    developer {
-                        id 'LexManos'
-                        name 'Lex Manos'
-                        roles { role 'developer' }
-                    }
-                    developer {
-                        id 'AbrarSyed'
-                        name 'Abrar Syed'
-                        roles { role 'contributor' }
-                    }
-                }
-            }
-        }
-    }
-}
 
 // HELPER METHODS
 
