@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
         maven {
             name = "forge"
-            url = "http://files.minecraftforge.net/maven"
+            url = "https://files.minecraftforge.net/maven"
         }
         maven {
             name = "sonatype"
@@ -12,23 +12,16 @@ buildscript {
         maven { url "https://jitpack.io" }
     }
     dependencies {
-        classpath 'com.github.asbyth:ForgeGradle:f6500bf402'
+        classpath 'com.github.asbyth:ForgeGradle:7f4bab690a'
     }
 }
 
-repositories {
-        maven {
-            name = "local"
-            url = "file:///home/cpw/projects/repo"
-        }
-}
 apply plugin: "maven"
 apply plugin: "net.minecraftforge.gradle.patcher"
 
 minecraft {
     version = "1.8.9"
-    mappings = 'stable_20'
-    //mappings = "snapshot_nodoc_20151122"
+    mappings = 'stable_22'
     workspaceDir = "projects"
     versionJson = "jsons/1.8.9-dev.json"
     buildUserdev = true
@@ -82,12 +75,10 @@ task changelog(type: JenkinsChangelog) {
     // skip if there is no forge jenkins pass
     onlyIf {
         project.hasProperty('forgeJenkinsPass')
-        // Not sure what abrar was trying to do here...
-        //project.file("build/distributions/${project.name}-${project.version}-changelog.txt").text = ""
     }
 
     outputs.upToDateWhen { false } // never up to date
-    serverRoot = "http://ci.jenkins.minecraftforge.net/"
+    serverRoot = "https://ci.jenkins.minecraftforge.net/"
     jobName = "minecraftforge"
     targetBuild = System.env['BUILD_NUMBER'] ?: 0;
     authName = "console_script"
@@ -99,8 +90,8 @@ task crowdin(type: CrowdinDownload) {
     output = "build/crowdin.zip"
     projectId = 'minecraft-forge'
     extract = false // we wanna keep it as a zip. not extract it to a folder named "crowdin.zip"
-    
-    // task auomatically skips if this is null
+
+    // task automatically skips if this is null
     if (project.hasProperty('crowdinKey'))
         apiKey = project.crowdinKey
 }
@@ -193,21 +184,6 @@ task makeMdk(type: Zip) {
     }
 }
 tasks.build.dependsOn makeMdk
-
-task ciWriteBuildNumber << {
-    def file = file("src/main/java/net/minecraftforge/common/ForgeVersion.java");
-    def bn = System.getenv("BUILD_NUMBER")?:0;
-    def outfile = "";
-    def ln = System.getProperty('line.separator')
-
-    file.eachLine{ String s ->
-        if (s.contains("buildVersion") && s.contains("= 0;")) {
-            s = "    public static final int buildVersion    = ${bn};";
-        }
-        outfile += (s+ln);
-    }
-    file.write(outfile);
-}
 
 uploadArchives {
     repositories.mavenDeployer {
