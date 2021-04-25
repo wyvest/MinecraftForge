@@ -26,7 +26,7 @@ minecraft {
     versionJson = "jsons/1.8.9-dev.json"
     buildUserdev = true
     buildInstaller = true
-    installerVersion = "1.4"
+    installerVersion = "1.5"
 
     def common = {
         patchPrefixOriginal "../src-base/minecraft"
