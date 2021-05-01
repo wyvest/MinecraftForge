@@ -847,8 +847,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
     }
 
-    public void connectToRealmsServer(String host, int port){}
-
     public void setPlayClient(NetHandlerPlayClient netHandlerPlayClient)
     {
         this.currentPlayClient = new WeakReference<NetHandlerPlayClient>(netHandlerPlayClient);
