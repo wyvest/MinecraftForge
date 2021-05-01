@@ -26,7 +26,8 @@
       "url": "https://maven.minecraftforge.net/"
     },
     {
-      "name": "net.minecraft:launchwrapper:1.12",
+      "name": "com.github.asbyth:LegacyLauncher:3a8b9710ee",
+      "url": "https://jitpack.io/",
       "serverreq":true
     },
     {
