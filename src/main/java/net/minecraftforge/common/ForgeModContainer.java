@@ -61,6 +61,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean forgeLightPipelineEnabled = true;
     public static boolean replaceVanillaBucketModel = true;
     public static boolean useKevinsEventBus = false;
+    public static boolean ignoreNonMods = false;
 
     private static Configuration config;
     private static ForgeModContainer INSTANCE;
@@ -158,6 +159,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         if (useKevinsEventBus) {
             FMLLog.info("An experimental feature (useKevinsEventBus) has been enabled, use at your own risk!");
         }
+
+        prop = config.get(CATEGORY_GENERAL, "ignoreNonMods", false);
+        prop.setLanguageKey("forge.configgui.ignoreNonMods").setRequiresMcRestart(true);
+        prop.comment = "Prevents Jar files from being loaded if they are not a Forge mod. (This could prevent libraries such as PlayerAPI from loading, which some mods depend on).";
+        ignoreNonMods = prop.getBoolean(ignoreNonMods);
+        propOrder.add(prop.getName());
 
         prop = config.get(CATEGORY_GENERAL, "sortRecipies", true);
         prop.comment = "Set to true to enable the post initialization sorting of crafting recipes using Forge's sorter. May cause desyncing on conflicting recipies. MUST RESTART MINECRAFT IF CHANGED FROM THE CONFIG GUI.";

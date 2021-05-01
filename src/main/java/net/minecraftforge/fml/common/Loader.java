@@ -23,6 +23,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.ModContainer.Disableable;
@@ -420,11 +421,15 @@ public class Loader {
         mods = ImmutableList.copyOf(mods);
         for (File nonMod : discoverer.getNonModLibs()) {
             if (nonMod.isFile()) {
-                FMLLog.info("FML has found a non-mod file %s in your mods directory. It will now be injected into your classpath. This could severe stability issues, it should be removed if possible.", nonMod.getName());
-                try {
-                    modClassLoader.addFile(nonMod);
-                } catch (MalformedURLException e) {
-                    FMLLog.log(Level.ERROR, e, "Encountered a weird problem with non-mod file injection : %s", nonMod.getName());
+                if (ForgeModContainer.ignoreNonMods) {
+                    FMLLog.info("FML has found a non-mod file %s in your mods directory. It will not be injected into your classpath.", nonMod.getName());
+                } else {
+                    FMLLog.info("FML has found a non-mod file %s in your mods directory. It will now be injected into your classpath. This could severe stability issues, it should be removed or adjust forge settings if possible.", nonMod.getName());
+                    try {
+                        modClassLoader.addFile(nonMod);
+                    } catch (MalformedURLException e) {
+                        FMLLog.log(Level.ERROR, e, "Encountered a weird problem with non-mod file injection : %s", nonMod.getName());
+                    }
                 }
             }
         }
