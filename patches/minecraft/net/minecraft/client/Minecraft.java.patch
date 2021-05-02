@@ -151,6 +151,15 @@
          }
  
          this.field_71424_I.func_76319_b();
+@@ -1369,7 +1387,7 @@
+             this.field_71429_W = 0;
+         }
+ 
+-        if (this.field_71429_W <= 0 && !this.field_71439_g.func_71039_bw())
++        if (this.field_71429_W <= 0 && !this.field_71439_g.func_71039_bw() && !this.field_71439_g.func_175149_v())
+         {
+             if (p_147115_1_ && this.field_71476_x != null && this.field_71476_x.field_72313_a == MovingObjectPosition.MovingObjectType.BLOCK)
+             {
 @@ -1377,7 +1395,7 @@
  
                  if (this.field_71441_e.func_180495_p(blockpos).func_177230_c().func_149688_o() != Material.field_151579_a && this.field_71442_b.func_180512_c(blockpos, this.field_71476_x.field_178784_b))
