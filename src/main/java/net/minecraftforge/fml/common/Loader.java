@@ -436,10 +436,6 @@ public class Loader {
         modController.transition(LoaderState.CONSTRUCTING, false);
         modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader, discoverer.getASMTable(), reverseDependencies);
 
-        List<ModContainer> mods = Lists.newArrayList();
-        mods.addAll(getActiveModList());
-        mods.sort(Comparator.comparing(ModContainer::getModId));
-
         FMLLog.fine("Mod signature data");
         FMLLog.fine(" \tValid Signatures:");
         for (ModContainer mod : getActiveModList()) {
