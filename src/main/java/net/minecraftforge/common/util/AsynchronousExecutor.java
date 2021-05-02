@@ -1,5 +1,7 @@
 package net.minecraftforge.common.util;
 
+import net.minecraftforge.fml.common.FMLLog;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,8 +13,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
-
-import net.minecraftforge.fml.common.FMLLog;
 
 
 /**
@@ -29,7 +29,7 @@ import net.minecraftforge.fml.common.FMLLog;
  */
 public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
 
-    public static interface CallBackProvider<P, T, C, E extends Throwable> extends ThreadFactory {
+    public interface CallBackProvider<P, T, C, E extends Throwable> extends ThreadFactory {
 
         /**
          * Normally an asynchronous call, but can be synchronous
@@ -60,7 +60,7 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
     @SuppressWarnings("rawtypes")
     static final AtomicIntegerFieldUpdater STATE_FIELD = AtomicIntegerFieldUpdater.newUpdater(AsynchronousExecutor.Task.class, "state");
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private static boolean set(AsynchronousExecutor.Task $this, int expected, int value) {
         return STATE_FIELD.compareAndSet($this, expected, value);
     }
@@ -75,7 +75,7 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
         volatile int state = PENDING;
         final P parameter;
         T object;
-        final List<C> callbacks = new LinkedList<C>();
+        final List<C> callbacks = new LinkedList<>();
         E t = null;
 
         Task(final P parameter) {
@@ -216,12 +216,13 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
     }
 
     final CallBackProvider<P, T, C, E> provider;
-    final Queue<Task> finished = new ConcurrentLinkedQueue<Task>();
-    final Map<P, Task> tasks = new HashMap<P, Task>();
+    final Queue<Task> finished = new ConcurrentLinkedQueue<>();
+    final Map<P, Task> tasks = new HashMap<>();
     final ThreadPoolExecutor pool;
 
     /**
      * Uses a thread pool to pass executions to the provider.
+     *
      * @see AsynchronousExecutor
      */
     public AsynchronousExecutor(final CallBackProvider<P, T, C, E> provider, final int coreSize) {
@@ -231,7 +232,7 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
         this.provider = provider;
 
         // We have an unbound queue size so do not need a max thread size
-        pool = new ThreadPoolExecutor(coreSize, Integer.MAX_VALUE, 60l, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), provider);
+        pool = new ThreadPoolExecutor(coreSize, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), provider);
     }
 
     /**
@@ -259,6 +260,7 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
      * Subsequent calls to {@link #get(Object)} might work.
      * <p>
      * This should always be synchronous
+     *
      * @return true if no further execution for the parameter is possible, such that, no exceptions will be thrown in {@link #finishActive()} for the parameter, and {@link #get(Object)} will throw an {@link IllegalStateException}, false otherwise
      * @throws IllegalStateException if parameter is not in the queue anymore
      * @throws IllegalStateException if the callback was not specified for given parameter
@@ -285,6 +287,7 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
      * This method attempts to skip the waiting period for said parameter.
      * <p>
      * This should always be synchronous.
+     *
      * @throws IllegalStateException if the parameter is not in the queue anymore, or sometimes if called from asynchronous thread
      */
     public T get(P parameter) throws E, IllegalStateException {
@@ -314,7 +317,7 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
     /**
      * Processes a parameter as if it was in the queue, without ever passing to another thread.
      */
-    public T getSkipQueue(P parameter, @SuppressWarnings("unchecked")C... callbacks) throws E {
+    public T getSkipQueue(P parameter, C... callbacks) throws E {
         final CallBackProvider<P, T, C, E> provider = this.provider;
         final T object = skipQueue(parameter);
         for (C callback : callbacks) {

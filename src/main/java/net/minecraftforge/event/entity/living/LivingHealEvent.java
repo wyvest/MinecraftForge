@@ -1,7 +1,7 @@
 package net.minecraftforge.event.entity.living;
 
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
  * LivingHealEvent is fired when an Entity is set to be healed. <br>
@@ -19,11 +19,10 @@ import net.minecraft.entity.EntityLivingBase;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class LivingHealEvent extends LivingEvent
-{
+public class LivingHealEvent extends LivingEvent {
     public float amount;
-    public LivingHealEvent(EntityLivingBase entity, float amount)
-    {
+
+    public LivingHealEvent(EntityLivingBase entity, float amount) {
         super(entity);
         this.amount = amount;
     }

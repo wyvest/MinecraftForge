@@ -63,8 +63,8 @@ public class EventBus implements IEventExceptionHandler {
                         Class<?>[] parameterTypes = method.getParameterTypes();
                         if (parameterTypes.length != 1) {
                             throw new IllegalArgumentException(
-                                    "Method " + method + " has @SubscribeEvent annotation, but requires " + parameterTypes.length +
-                                            " arguments.  Event handler methods must require a single argument."
+                                "Method " + method + " has @SubscribeEvent annotation, but requires " + parameterTypes.length +
+                                    " arguments.  Event handler methods must require a single argument."
                             );
                         }
 

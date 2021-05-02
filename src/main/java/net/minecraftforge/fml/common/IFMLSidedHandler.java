@@ -12,10 +12,6 @@
 
 package net.minecraftforge.fml.common;
 
-import java.io.File;
-import java.util.List;
-import java.util.Set;
-
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
@@ -23,8 +19,11 @@ import net.minecraft.util.IThreadListener;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.Side;
 
-public interface IFMLSidedHandler
-{
+import java.io.File;
+import java.util.List;
+import java.util.Set;
+
+public interface IFMLSidedHandler {
     List<String> getAdditionalBrandingInformation();
 
     Side getSide();

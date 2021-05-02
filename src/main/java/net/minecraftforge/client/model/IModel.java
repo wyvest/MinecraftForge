@@ -1,19 +1,17 @@
 package net.minecraftforge.client.model;
 
-import java.util.Collection;
-
+import com.google.common.base.Function;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
 
-import com.google.common.base.Function;
+import java.util.Collection;
 
 /*
  * Interface for models that can be baked
  * (possibly to different vertex formats and with different state).
  */
-public interface IModel
-{
+public interface IModel {
     /*
      * Returns all model locations that this model depends on.
      * Assume that returned collection is immutable.

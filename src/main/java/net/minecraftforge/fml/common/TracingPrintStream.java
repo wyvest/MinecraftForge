@@ -9,9 +9,9 @@
 
 package net.minecraftforge.fml.common;
 
-import java.io.PrintStream;
-
 import org.apache.logging.log4j.Logger;
+
+import java.io.PrintStream;
 
 /**
  * PrintStream which redirects it's output to a given logger.
@@ -20,8 +20,8 @@ import org.apache.logging.log4j.Logger;
  */
 public class TracingPrintStream extends PrintStream {
 
-    private Logger logger;
-    private int BASE_DEPTH = 3;
+    private final Logger logger;
+    private final int BASE_DEPTH = 3;
 
     public TracingPrintStream(Logger logger, PrintStream original) {
         super(original);

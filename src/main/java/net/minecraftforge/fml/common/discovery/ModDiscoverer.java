@@ -44,13 +44,13 @@ public class ModDiscoverer {
 
     public void findClasspathMods(ModClassLoader modClassLoader) {
         List<String> knownLibraries = ImmutableList.<String>builder()
-                // skip default libs
-                .addAll(modClassLoader.getDefaultLibraries())
-                // skip loaded coremods
-                .addAll(CoreModManager.getIgnoredMods())
-                // skip reparse coremods here
-                .addAll(CoreModManager.getReparseableCoremods())
-                .build();
+            // skip default libs
+            .addAll(modClassLoader.getDefaultLibraries())
+            // skip loaded coremods
+            .addAll(CoreModManager.getIgnoredMods())
+            // skip reparse coremods here
+            .addAll(CoreModManager.getReparseableCoremods())
+            .build();
         File[] minecraftSources = modClassLoader.getParentSources();
         if (minecraftSources.length == 1 && minecraftSources[0].isFile()) {
             FMLLog.fine("Minecraft is a file at %s, loading", minecraftSources[0].getAbsolutePath());

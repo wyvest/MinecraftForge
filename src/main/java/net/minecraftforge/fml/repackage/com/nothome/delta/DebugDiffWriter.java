@@ -33,12 +33,13 @@ import java.io.IOException;
  */
 public class DebugDiffWriter implements DiffWriter {
 
-    private ByteArrayOutputStream os = new ByteArrayOutputStream();
+    private final ByteArrayOutputStream os = new ByteArrayOutputStream();
 
     /**
      * Constructs a new DebugDiffWriter.
      */
-    public DebugDiffWriter() {}
+    public DebugDiffWriter() {
+    }
 
     @Override
     public void addCopy(long offset, int length) throws IOException {
@@ -52,17 +53,18 @@ public class DebugDiffWriter implements DiffWriter {
         os.write(b);
         writeBuf();
     }
+
     private void writeBuf() {
         System.err.print("DATA: ");
         byte[] ba = os.toByteArray();
-        for (int ix = 0; ix < ba.length; ix++) {
-            if (ba[ix] == '\n')
+        for (byte b : ba) {
+            if (b == '\n')
                 System.err.print("\\n");
             else
-                System.err.print(String.valueOf((char)((char) ba[ix])));
+                System.err.print((char) b);
             //System.err.print("0x" + Integer.toHexString(buf[ix]) + " "); // hex output
         }
-        System.err.println("");
+        System.err.println();
         os.reset();
     }
 
@@ -70,6 +72,7 @@ public class DebugDiffWriter implements DiffWriter {
     public void flush() throws IOException {
         System.err.println("FLUSH");
     }
+
     @Override
     public void close() throws IOException {
         System.err.println("CLOSE");

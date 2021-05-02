@@ -13,45 +13,39 @@
 package net.minecraftforge.fml.client.registry;
 
 import com.google.common.collect.Maps;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
-import org.apache.commons.lang3.ArrayUtils;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Map;
 
-public class ClientRegistry
-{
-    private static Map<Class<? extends Entity>, ResourceLocation> entityShaderMap = Maps.newHashMap();
+public class ClientRegistry {
+    private static final Map<Class<? extends Entity>, ResourceLocation> entityShaderMap = Maps.newHashMap();
 
     /**
-     *
      * Utility method for registering a tile entity and it's renderer at once - generally you should register them separately
      *
      * @param tileEntityClass
      * @param id
      * @param specialRenderer
      */
-    public static <T extends TileEntity> void registerTileEntity(Class<T> tileEntityClass, String id, TileEntitySpecialRenderer<? super T> specialRenderer)
-    {
+    public static <T extends TileEntity> void registerTileEntity(Class<T> tileEntityClass, String id, TileEntitySpecialRenderer<? super T> specialRenderer) {
         GameRegistry.registerTileEntity(tileEntityClass, id);
         bindTileEntitySpecialRenderer(tileEntityClass, specialRenderer);
     }
 
-    public static <T extends TileEntity> void bindTileEntitySpecialRenderer(Class<T> tileEntityClass, TileEntitySpecialRenderer<? super T> specialRenderer)
-    {
+    public static <T extends TileEntity> void bindTileEntitySpecialRenderer(Class<T> tileEntityClass, TileEntitySpecialRenderer<? super T> specialRenderer) {
         TileEntityRendererDispatcher.instance.mapSpecialRenderers.put(tileEntityClass, specialRenderer);
         specialRenderer.setRendererDispatcher(TileEntityRendererDispatcher.instance);
     }
 
-    public static void registerKeyBinding(KeyBinding key)
-    {
+    public static void registerKeyBinding(KeyBinding key) {
         Minecraft.getMinecraft().gameSettings.keyBindings = ArrayUtils.add(Minecraft.getMinecraft().gameSettings.keyBindings, key);
     }
 
@@ -62,13 +56,11 @@ public class ClientRegistry
      * @param entityClass
      * @param shader
      */
-    public static void registerEntityShader(Class<? extends Entity> entityClass, ResourceLocation shader)
-    {
+    public static void registerEntityShader(Class<? extends Entity> entityClass, ResourceLocation shader) {
         entityShaderMap.put(entityClass, shader);
     }
 
-    public static ResourceLocation getEntityShader(Class<? extends Entity> entityClass)
-    {
+    public static ResourceLocation getEntityShader(Class<? extends Entity> entityClass) {
         return entityShaderMap.get(entityClass);
     }
 }

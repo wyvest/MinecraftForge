@@ -40,8 +40,7 @@ import static net.minecraftforge.fml.client.config.GuiUtils.UNDO_CHAR;
  *
  * @author bspkrs
  */
-public class GuiConfig extends GuiScreen
-{
+public class GuiConfig extends GuiScreen {
     /**
      * A reference to the screen object that created this. Used for navigating between screens.
      */
@@ -75,19 +74,18 @@ public class GuiConfig extends GuiScreen
      * (includes child screens). If configID is not defined, the events will be posted if the parent gui is null or if the parent gui
      * is not an instance of GuiConfig.
      *
-     * @param parentScreen the parent GuiScreen object
-     * @param configElements a List of IConfigElement objects
-     * @param modID the mod ID for the mod whose config settings will be edited
-     * @param configID an identifier that will be passed to the OnConfigChanged and PostConfigChanged events. Setting this value will force
-     *            the save action to be called when the Done button is pressed on this screen if any configElements were changed.
+     * @param parentScreen           the parent GuiScreen object
+     * @param configElements         a List of IConfigElement objects
+     * @param modID                  the mod ID for the mod whose config settings will be edited
+     * @param configID               an identifier that will be passed to the OnConfigChanged and PostConfigChanged events. Setting this value will force
+     *                               the save action to be called when the Done button is pressed on this screen if any configElements were changed.
      * @param allRequireWorldRestart send true if all configElements on this screen require a world restart
-     * @param allRequireMcRestart send true if all configElements on this screen require MC to be restarted
-     * @param title the desired title for this screen. For consistency it is recommended that you pass the path of the config file being
-     *            edited.
+     * @param allRequireMcRestart    send true if all configElements on this screen require MC to be restarted
+     * @param title                  the desired title for this screen. For consistency it is recommended that you pass the path of the config file being
+     *                               edited.
      */
     public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, String configID,
-            boolean allRequireWorldRestart, boolean allRequireMcRestart, String title)
-    {
+                     boolean allRequireWorldRestart, boolean allRequireMcRestart, String title) {
         this(parentScreen, configElements, modID, configID, allRequireWorldRestart, allRequireMcRestart, title, null);
     }
 
@@ -95,17 +93,16 @@ public class GuiConfig extends GuiScreen
      * GuiConfig constructor that will use ConfigChangedEvent when editing is concluded. This constructor passes null for configID.
      * If configID is not defined, the events will be posted if the parent gui is null or if the parent gui is not an instance of GuiConfig.
      *
-     * @param parentScreen the parent GuiScreen object
-     * @param configElements a List of IConfigElement objects
-     * @param modID the mod ID for the mod whose config settings will be edited
+     * @param parentScreen           the parent GuiScreen object
+     * @param configElements         a List of IConfigElement objects
+     * @param modID                  the mod ID for the mod whose config settings will be edited
      * @param allRequireWorldRestart send true if all configElements on this screen require a world restart
-     * @param allRequireMcRestart send true if all configElements on this screen require MC to be restarted
-     * @param title the desired title for this screen. For consistency it is recommended that you pass the path of the config file being
-     *            edited.
+     * @param allRequireMcRestart    send true if all configElements on this screen require MC to be restarted
+     * @param title                  the desired title for this screen. For consistency it is recommended that you pass the path of the config file being
+     *                               edited.
      */
     public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID,
-            boolean allRequireWorldRestart, boolean allRequireMcRestart, String title)
-    {
+                     boolean allRequireWorldRestart, boolean allRequireMcRestart, String title) {
         this(parentScreen, configElements, modID, null, allRequireWorldRestart, allRequireMcRestart, title, null);
     }
 
@@ -113,19 +110,18 @@ public class GuiConfig extends GuiScreen
      * GuiConfig constructor that will use ConfigChangedEvent when editing is concluded. This constructor passes null for configID.
      * If configID is not defined, the events will be posted if the parent gui is null or if the parent gui is not an instance of GuiConfig.
      *
-     * @param parentScreen the parent GuiScreen object
-     * @param configElements a List of IConfigElement objects
-     * @param modID the mod ID for the mod whose config settings will be edited
+     * @param parentScreen           the parent GuiScreen object
+     * @param configElements         a List of IConfigElement objects
+     * @param modID                  the mod ID for the mod whose config settings will be edited
      * @param allRequireWorldRestart send true if all configElements on this screen require a world restart
-     * @param allRequireMcRestart send true if all configElements on this screen require MC to be restarted
-     * @param title the desired title for this screen. For consistency it is recommended that you pass the path of the config file being
-     *            edited.
-     * @param titleLine2 the desired title second line for this screen. Typically this is used to send the category name of the category
-     *            currently being edited.
+     * @param allRequireMcRestart    send true if all configElements on this screen require MC to be restarted
+     * @param title                  the desired title for this screen. For consistency it is recommended that you pass the path of the config file being
+     *                               edited.
+     * @param titleLine2             the desired title second line for this screen. Typically this is used to send the category name of the category
+     *                               currently being edited.
      */
     public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID,
-            boolean allRequireWorldRestart, boolean allRequireMcRestart, String title, String titleLine2)
-    {
+                     boolean allRequireWorldRestart, boolean allRequireMcRestart, String title, String titleLine2) {
         this(parentScreen, configElements, modID, null, allRequireWorldRestart, allRequireMcRestart, title, titleLine2);
     }
 
@@ -135,25 +131,24 @@ public class GuiConfig extends GuiScreen
      * pressed if any configElements were changed (includes child screens). If configID is not defined, the events will be posted if the parent
      * gui is null or if the parent gui is not an instance of GuiConfig.
      *
-     * @param parentScreen the parent GuiScreen object
-     * @param configElements a List of IConfigElement objects
-     * @param modID the mod ID for the mod whose config settings will be edited
-     * @param configID an identifier that will be passed to the OnConfigChanged and PostConfigChanged events
+     * @param parentScreen           the parent GuiScreen object
+     * @param configElements         a List of IConfigElement objects
+     * @param modID                  the mod ID for the mod whose config settings will be edited
+     * @param configID               an identifier that will be passed to the OnConfigChanged and PostConfigChanged events
      * @param allRequireWorldRestart send true if all configElements on this screen require a world restart
-     * @param allRequireMcRestart send true if all configElements on this screen require MC to be restarted
-     * @param title the desired title for this screen. For consistency it is recommended that you pass the path of the config file being
-     *            edited.
-     * @param titleLine2 the desired title second line for this screen. Typically this is used to send the category name of the category
-     *            currently being edited.
+     * @param allRequireMcRestart    send true if all configElements on this screen require MC to be restarted
+     * @param title                  the desired title for this screen. For consistency it is recommended that you pass the path of the config file being
+     *                               edited.
+     * @param titleLine2             the desired title second line for this screen. Typically this is used to send the category name of the category
+     *                               currently being edited.
      */
     public GuiConfig(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, String configID,
-            boolean allRequireWorldRestart, boolean allRequireMcRestart, String title, String titleLine2)
-    {
+                     boolean allRequireWorldRestart, boolean allRequireMcRestart, String title, String titleLine2) {
         this.mc = Minecraft.getMinecraft();
         this.parentScreen = parentScreen;
         this.configElements = configElements;
         this.entryList = new GuiConfigEntries(this, mc);
-        this.initEntries = new ArrayList<IConfigEntry>(entryList.listEntries);
+        this.initEntries = new ArrayList<>(entryList.listEntries);
         this.allRequireWorldRestart = allRequireWorldRestart;
         this.allRequireMcRestart = allRequireMcRestart;
         this.modID = modID;
@@ -166,8 +161,7 @@ public class GuiConfig extends GuiScreen
             this.titleLine2 = this.titleLine2.replaceFirst(" > ", "");
     }
 
-    public static String getAbridgedConfigPath(String path)
-    {
+    public static String getAbridgedConfigPath(String path) {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.mcDataDir.getAbsolutePath().endsWith("."))
             return path.replace("\\", "/").replace(mc.mcDataDir.getAbsolutePath().replace("\\", "/").substring(0, mc.mcDataDir.getAbsolutePath().length() - 1), "/.minecraft/");
@@ -176,12 +170,10 @@ public class GuiConfig extends GuiScreen
     }
 
     @Override
-    public void initGui()
-    {
+    public void initGui() {
         Keyboard.enableRepeatEvents(true);
 
-        if (this.entryList == null || this.needsRefresh)
-        {
+        if (this.entryList == null || this.needsRefresh) {
             this.entryList = new GuiConfigEntries(this, mc);
             this.needsRefresh = false;
         }
@@ -195,11 +187,11 @@ public class GuiConfig extends GuiScreen
         int buttonWidthHalf = (doneWidth + 5 + undoWidth + 5 + resetWidth + 5 + checkWidth) / 2;
         this.buttonList.add(new GuiButtonExt(2000, this.width / 2 - buttonWidthHalf, this.height - 29, doneWidth, 20, I18n.format("gui.done")));
         this.buttonList.add(this.btnDefaultAll = new GuiUnicodeGlyphButton(2001, this.width / 2 - buttonWidthHalf + doneWidth + 5 + undoWidth + 5,
-                this.height - 29, resetWidth, 20, " " + I18n.format("fml.configgui.tooltip.resetToDefault"), RESET_CHAR, 2.0F));
+            this.height - 29, resetWidth, 20, " " + I18n.format("fml.configgui.tooltip.resetToDefault"), RESET_CHAR, 2.0F));
         this.buttonList.add(btnUndoAll = new GuiUnicodeGlyphButton(2002, this.width / 2 - buttonWidthHalf + doneWidth + 5,
-                this.height - 29, undoWidth, 20, " " + I18n.format("fml.configgui.tooltip.undoChanges"), UNDO_CHAR, 2.0F));
+            this.height - 29, undoWidth, 20, " " + I18n.format("fml.configgui.tooltip.undoChanges"), UNDO_CHAR, 2.0F));
         this.buttonList.add(chkApplyGlobally = new GuiCheckBox(2003, this.width / 2 - buttonWidthHalf + doneWidth + 5 + undoWidth + 5 + resetWidth + 5,
-                this.height - 24, I18n.format("fml.configgui.applyGlobally"), false));
+            this.height - 24, I18n.format("fml.configgui.applyGlobally"), false));
 
         this.undoHoverChecker = new HoverChecker(this.btnUndoAll, 800);
         this.resetHoverChecker = new HoverChecker(this.btnDefaultAll, 800);
@@ -208,12 +200,10 @@ public class GuiConfig extends GuiScreen
     }
 
     @Override
-    public void onGuiClosed()
-    {
+    public void onGuiClosed() {
         this.entryList.onGuiClosed();
 
-        if (this.configID != null && this.parentScreen instanceof GuiConfig)
-        {
+        if (this.configID != null && this.parentScreen instanceof GuiConfig) {
             GuiConfig parentGuiConfig = (GuiConfig) this.parentScreen;
             parentGuiConfig.needsRefresh = true;
             parentGuiConfig.initGui();
@@ -229,7 +219,7 @@ public class GuiConfig extends GuiScreen
             boolean flag = true;
             try {
                 if ((configID != null || this.parentScreen == null || !(this.parentScreen instanceof GuiConfig))
-                        && (this.entryList.hasChangedEntry(true))) {
+                    && (this.entryList.hasChangedEntry(true))) {
                     boolean requiresMcRestart = this.entryList.saveConfigElements();
 
                     if (Loader.isModLoaded(modID)) {
@@ -238,64 +228,51 @@ public class GuiConfig extends GuiScreen
                         if (!event.getResult().equals(Result.DENY))
                             MinecraftForge.EVENT_BUS.post(new PostConfigChangedEvent(modID, configID, isWorldRunning, requiresMcRestart));
 
-                        if (requiresMcRestart)
-                        {
+                        if (requiresMcRestart) {
                             flag = false;
                             mc.displayGuiScreen(new GuiMessageDialog(parentScreen, "fml.configgui.gameRestartTitle",
-                                    new ChatComponentText(I18n.format("fml.configgui.gameRestartRequired")), "fml.configgui.confirmRestartMessage"));
+                                new ChatComponentText(I18n.format("fml.configgui.gameRestartRequired")), "fml.configgui.confirmRestartMessage"));
                         }
 
                         if (this.parentScreen instanceof GuiConfig)
                             ((GuiConfig) this.parentScreen).needsRefresh = true;
                     }
                 }
-            }
-            catch (Throwable e)
-            {
+            } catch (Throwable e) {
                 e.printStackTrace();
             }
 
             if (flag)
                 this.mc.displayGuiScreen(this.parentScreen);
-        }
-        else if (button.id == 2001)
-        {
+        } else if (button.id == 2001) {
             this.entryList.setAllToDefault(this.chkApplyGlobally.isChecked());
-        }
-        else if (button.id == 2002)
-        {
+        } else if (button.id == 2002) {
             this.entryList.undoAllChanges(this.chkApplyGlobally.isChecked());
         }
     }
 
-    public void handleMouseInput() throws IOException
-    {
+    public void handleMouseInput() throws IOException {
         super.handleMouseInput();
         this.entryList.handleMouseInput();
     }
 
     @Override
-    protected void mouseClicked(int x, int y, int mouseEvent) throws IOException
-    {
-        if (mouseEvent != 0 || !this.entryList.mouseClicked(x, y, mouseEvent))
-        {
+    protected void mouseClicked(int x, int y, int mouseEvent) throws IOException {
+        if (mouseEvent != 0 || !this.entryList.mouseClicked(x, y, mouseEvent)) {
             this.entryList.mouseClickedPassThru(x, y, mouseEvent);
             super.mouseClicked(x, y, mouseEvent);
         }
     }
 
     @Override
-    protected void mouseReleased(int x, int y, int mouseEvent)
-    {
-        if (mouseEvent != 0 || !this.entryList.mouseReleased(x, y, mouseEvent))
-        {
+    protected void mouseReleased(int x, int y, int mouseEvent) {
+        if (mouseEvent != 0 || !this.entryList.mouseReleased(x, y, mouseEvent)) {
             super.mouseReleased(x, y, mouseEvent);
         }
     }
 
     @Override
-    protected void keyTyped(char eventChar, int eventKey)
-    {
+    protected void keyTyped(char eventChar, int eventKey) {
         if (eventKey == Keyboard.KEY_ESCAPE)
             this.mc.displayGuiScreen(parentScreen);
         else
@@ -303,26 +280,23 @@ public class GuiConfig extends GuiScreen
     }
 
     @Override
-    public void updateScreen()
-    {
+    public void updateScreen() {
         super.updateScreen();
         this.entryList.updateScreen();
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
-    {
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.drawDefaultBackground();
         this.entryList.drawScreen(mouseX, mouseY, partialTicks);
         this.drawCenteredString(this.fontRendererObj, this.title, this.width / 2, 8, 16777215);
         String title2 = this.titleLine2;
 
-        if (title2 != null)
-        {
+        if (title2 != null) {
             int strWidth = mc.fontRendererObj.getStringWidth(title2);
-            int elipsisWidth = mc.fontRendererObj.getStringWidth("...");
-            if (strWidth > width - 6 && strWidth > elipsisWidth)
-                title2 = mc.fontRendererObj.trimStringToWidth(title2, width - 6 - elipsisWidth).trim() + "...";
+            int ellipsisWidth = mc.fontRendererObj.getStringWidth("...");
+            if (strWidth > width - 6 && strWidth > ellipsisWidth)
+                title2 = mc.fontRendererObj.trimStringToWidth(title2, width - 6 - ellipsisWidth).trim() + "...";
             this.drawCenteredString(this.fontRendererObj, title2, this.width / 2, 18, 16777215);
         }
 
@@ -338,8 +312,7 @@ public class GuiConfig extends GuiScreen
             this.drawToolTip(Arrays.asList(I18n.format("fml.configgui.tooltip.applyGlobally").split("\n")), mouseX, mouseY);
     }
 
-    public void drawToolTip(List<String> stringList, int x, int y)
-    {
+    public void drawToolTip(List<String> stringList, int x, int y) {
         GuiUtils.drawHoveringText(stringList, x, y, width, height, 300, fontRendererObj);
     }
 }

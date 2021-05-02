@@ -6,7 +6,7 @@ public class ChunkIOExecutor {
     static final int BASE_THREADS = 1;
     static final int PLAYERS_PER_THREAD = 50;
 
-    private static final AsynchronousExecutor<QueuedChunk, net.minecraft.world.chunk.Chunk, Runnable, RuntimeException> instance = new AsynchronousExecutor<QueuedChunk, net.minecraft.world.chunk.Chunk, Runnable, RuntimeException>(new ChunkIOProvider(), BASE_THREADS);
+    private static final AsynchronousExecutor<QueuedChunk, net.minecraft.world.chunk.Chunk, Runnable, RuntimeException> instance = new AsynchronousExecutor<>(new ChunkIOProvider(), BASE_THREADS);
 
     public static net.minecraft.world.chunk.Chunk syncChunkLoad(net.minecraft.world.World world, net.minecraft.world.chunk.storage.AnvilChunkLoader loader, net.minecraft.world.gen.ChunkProviderServer provider, int x, int z) {
         return instance.getSkipQueue(new QueuedChunk(x, z, loader, world, provider));

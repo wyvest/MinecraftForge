@@ -1,22 +1,19 @@
 package net.minecraftforge.fml.common.eventhandler;
 
-import static org.objectweb.asm.Opcodes.*;
-
-import java.lang.reflect.Method;
-import java.util.HashMap;
-
+import com.google.common.collect.Maps;
 import net.minecraftforge.fml.common.ModContainer;
-
 import org.apache.logging.log4j.ThreadContext;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
-import com.google.common.collect.Maps;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+
+import static org.objectweb.asm.Opcodes.*;
 
 
-public class ASMEventHandler implements IEventListener
-{
+public class ASMEventHandler implements IEventListener {
     private static int IDs = 0;
     private static final String HANDLER_DESC = Type.getInternalName(IEventListener.class);
     private static final String HANDLER_FUNC_DESC = Type.getMethodDescriptor(IEventListener.class.getDeclaredMethods()[0]);
@@ -26,26 +23,22 @@ public class ASMEventHandler implements IEventListener
 
     private final IEventListener handler;
     private final SubscribeEvent subInfo;
-    private ModContainer owner;
-    private String readable;
+    private final ModContainer owner;
+    private final String readable;
 
-    public ASMEventHandler(Object target, Method method, ModContainer owner) throws Exception
-    {
+    public ASMEventHandler(Object target, Method method, ModContainer owner) throws Exception {
         this.owner = owner;
-        handler = (IEventListener)createWrapper(method).getConstructor(Object.class).newInstance(target);
+        handler = (IEventListener) createWrapper(method).getConstructor(Object.class).newInstance(target);
         subInfo = method.getAnnotation(SubscribeEvent.class);
         readable = "ASM: " + target + " " + method.getName() + Type.getMethodDescriptor(method);
     }
 
     @Override
-    public void invoke(Event event)
-    {
+    public void invoke(Event event) {
         if (GETCONTEXT)
             ThreadContext.put("mod", owner == null ? "" : owner.getName());
-        if (handler != null)
-        {
-            if (!event.isCancelable() || !event.isCanceled() || subInfo.receiveCanceled())
-            {
+        if (handler != null) {
+            if (!event.isCancelable() || !event.isCanceled() || subInfo.receiveCanceled()) {
                 handler.invoke(event);
             }
         }
@@ -53,15 +46,12 @@ public class ASMEventHandler implements IEventListener
             ThreadContext.remove("mod");
     }
 
-    public EventPriority getPriority()
-    {
+    public EventPriority getPriority() {
         return subInfo.priority();
     }
 
-    public Class<?> createWrapper(Method callback)
-    {
-        if (cache.containsKey(callback))
-        {
+    public Class<?> createWrapper(Method callback) {
+        if (cache.containsKey(callback)) {
             return cache.get(callback);
         }
 
@@ -69,19 +59,11 @@ public class ASMEventHandler implements IEventListener
         MethodVisitor mv;
 
         String name = getUniqueName(callback);
-        String desc = name.replace('.',  '/');
+        String desc = name.replace('.', '/');
         String instType = Type.getInternalName(callback.getDeclaringClass());
         String eventType = Type.getInternalName(callback.getParameterTypes()[0]);
 
-        /*
-        System.out.println("Name:     " + name);
-        System.out.println("Desc:     " + desc);
-        System.out.println("InstType: " + instType);
-        System.out.println("Callback: " + callback.getName() + Type.getMethodDescriptor(callback));
-        System.out.println("Event:    " + eventType);
-        */
-
-        cw.visit(V1_6, ACC_PUBLIC | ACC_SUPER, desc, null, "java/lang/Object", new String[]{ HANDLER_DESC });
+        cw.visit(V1_6, ACC_PUBLIC | ACC_SUPER, desc, null, "java/lang/Object", new String[]{HANDLER_DESC});
 
         cw.visitSource(".dynamic", null);
         {
@@ -118,29 +100,24 @@ public class ASMEventHandler implements IEventListener
         return ret;
     }
 
-    private String getUniqueName(Method callback)
-    {
+    private String getUniqueName(Method callback) {
         return String.format("%s_%d_%s_%s_%s", getClass().getName(), IDs++,
-                callback.getDeclaringClass().getSimpleName(),
-                callback.getName(),
-                callback.getParameterTypes()[0].getSimpleName());
+            callback.getDeclaringClass().getSimpleName(),
+            callback.getName(),
+            callback.getParameterTypes()[0].getSimpleName());
     }
 
-    private static class ASMClassLoader extends ClassLoader
-    {
-        private ASMClassLoader()
-        {
+    private static class ASMClassLoader extends ClassLoader {
+        private ASMClassLoader() {
             super(ASMClassLoader.class.getClassLoader());
         }
 
-        public Class<?> define(String name, byte[] data)
-        {
+        public Class<?> define(String name, byte[] data) {
             return defineClass(name, data, 0, data.length);
         }
     }
 
-    public String toString()
-    {
+    public String toString() {
         return readable;
     }
 }

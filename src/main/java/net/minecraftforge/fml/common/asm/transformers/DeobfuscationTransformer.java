@@ -17,16 +17,13 @@ import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import net.minecraftforge.fml.common.asm.transformers.deobf.FMLRemappingAdapter;
-
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.commons.RemappingClassAdapter;
 
-import java.util.Arrays;
-
 public class DeobfuscationTransformer implements IClassTransformer, IClassNameTransformer {
 
-    private static final String[] EXEMPT_LIBS = new String[] {
+    private static final String[] EXEMPT_LIBS = new String[]{
         "com.google.",
         "com.mojang.",
         "joptsimple.",
@@ -39,7 +36,7 @@ public class DeobfuscationTransformer implements IClassTransformer, IClassNameTr
         "com.jcraft"
     };
 
-    private static final String[] EXEMPT_DEV = new String[] {
+    private static final String[] EXEMPT_DEV = new String[]{
         "net.minecraft.",
         "net.minecraftforge."
     };
@@ -55,10 +52,8 @@ public class DeobfuscationTransformer implements IClassTransformer, IClassNameTr
     private final boolean deobfuscatedEnvironment = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
 
     @Override
-    public byte[] transform(String name, String transformedName, byte[] bytes)
-    {
-        if (bytes == null)
-        {
+    public byte[] transform(String name, String transformedName, byte[] bytes) {
+        if (bytes == null) {
             return null;
         }
 
@@ -95,15 +90,13 @@ public class DeobfuscationTransformer implements IClassTransformer, IClassNameTr
     }
 
     @Override
-    public String remapClassName(String name)
-    {
-        return FMLDeobfuscatingRemapper.INSTANCE.map(name.replace('.','/')).replace('/', '.');
+    public String remapClassName(String name) {
+        return FMLDeobfuscatingRemapper.INSTANCE.map(name.replace('.', '/')).replace('/', '.');
     }
 
     @Override
-    public String unmapClassName(String name)
-    {
-        return FMLDeobfuscatingRemapper.INSTANCE.unmap(name.replace('.', '/')).replace('/','.');
+    public String unmapClassName(String name) {
+        return FMLDeobfuscatingRemapper.INSTANCE.unmap(name.replace('.', '/')).replace('/', '.');
     }
 
 }

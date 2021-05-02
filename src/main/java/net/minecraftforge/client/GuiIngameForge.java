@@ -855,7 +855,7 @@ public class GuiIngameForge extends GuiIngame
         mc.getTextureManager().bindTexture(res);
     }
 
-    private class GuiOverlayDebugForge extends GuiOverlayDebug
+    private static class GuiOverlayDebugForge extends GuiOverlayDebug
     {
         private GuiOverlayDebugForge(Minecraft mc){ super(mc); }
         @Override protected void renderDebugInfoLeft(){}

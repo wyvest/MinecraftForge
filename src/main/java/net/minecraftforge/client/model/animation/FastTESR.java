@@ -1,7 +1,5 @@
 package net.minecraftforge.client.model.animation;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -11,12 +9,11 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.tileentity.TileEntity;
+import org.lwjgl.opengl.GL11;
 
-public abstract class FastTESR<T extends TileEntity> extends TileEntitySpecialRenderer<T>
-{
+public abstract class FastTESR<T extends TileEntity> extends TileEntitySpecialRenderer<T> {
     @Override
-    public final void renderTileEntityAt(T te, double x, double y, double z, float partialTicks, int destroyStage)
-    {
+    public final void renderTileEntityAt(T te, double x, double y, double z, float partialTicks, int destroyStage) {
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldRenderer = tessellator.getWorldRenderer();
         this.bindTexture(TextureMap.locationBlocksTexture);
@@ -25,12 +22,9 @@ public abstract class FastTESR<T extends TileEntity> extends TileEntitySpecialRe
         GlStateManager.enableBlend();
         GlStateManager.disableCull();
 
-        if (Minecraft.isAmbientOcclusionEnabled())
-        {
+        if (Minecraft.isAmbientOcclusionEnabled()) {
             GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        }
-        else
-        {
+        } else {
             GlStateManager.shadeModel(GL11.GL_FLAT);
         }
 

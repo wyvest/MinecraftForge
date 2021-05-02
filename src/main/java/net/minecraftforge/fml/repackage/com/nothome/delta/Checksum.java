@@ -25,11 +25,11 @@
 
 package net.minecraftforge.fml.repackage.com.nothome.delta;
 
+import com.google.common.collect.Maps;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
 
 /**
  * Checksum computation class.
@@ -38,9 +38,9 @@ public class Checksum {
 
     static final boolean debug = false;
 
-    private Map<Long,Integer> checksums = Maps.newHashMap();
+    private final Map<Long, Integer> checksums = Maps.newHashMap();
 
-    private static final char single_hash[] = {
+    private static final char[] single_hash = {
         /* Random numbers generated using SLIB's pseudo-random number generator. */
         0xbcd1, 0xbb65, 0x42c2, 0xdffe, 0x9666, 0x431b, 0x8504, 0xeb46,
         0x6379, 0xd460, 0xcf14, 0x53cf, 0xdb51, 0xdb08, 0x12c8, 0xf602,
@@ -108,28 +108,30 @@ public class Checksum {
     }
 
     private static long queryChecksum0(ByteBuffer bb, int len) {
-        int high = 0; int low = 0;
+        int high = 0;
+        int low = 0;
         for (int i = 0; i < len; i++) {
-            low += single_hash[bb.get()+128];
+            low += single_hash[bb.get() + 128];
             high += low;
         }
-        return ((high & 0xffff) << 16) | (low & 0xffff);
+        return ((long) (high & 0xffff) << 16) | (low & 0xffff);
     }
 
     /**
      * Increments a checksum.
-     * @param checksum initial checksum
-     * @param out byte leaving view
-     * @param in byte entering view
+     *
+     * @param checksum  initial checksum
+     * @param out       byte leaving view
+     * @param in        byte entering view
      * @param chunkSize size of chunks
      * @return new checksum
      */
     public static long incrementChecksum(long checksum, byte out, byte in, int chunkSize) {
-        char old_c = single_hash[out+128];
-        char new_c = single_hash[in+128];
-        int low   = ((int)((checksum) & 0xffff) - old_c + new_c) & 0xffff;
-        int high  = ((int)((checksum) >> 16) - (old_c * chunkSize) + low) & 0xffff;
-        return (high << 16) | (low & 0xffff);
+        char old_c = single_hash[out + 128];
+        char new_c = single_hash[in + 128];
+        int low = ((int) ((checksum) & 0xffff) - old_c + new_c) & 0xffff;
+        int high = ((int) ((checksum) >> 16) - (old_c * chunkSize) + low) & 0xffff;
+        return ((long) high << 16) | (low & 0xffff);
     }
 
     /**
@@ -152,8 +154,7 @@ public class Checksum {
      * Returns a debug <code>String</code>.
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return super.toString() +
             " checksums=" + this.checksums;
     }

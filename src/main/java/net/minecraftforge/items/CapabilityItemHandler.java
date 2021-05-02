@@ -9,25 +9,19 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 
-public class CapabilityItemHandler
-{
+public class CapabilityItemHandler {
     @CapabilityInject(IItemHandler.class)
     public static Capability<IItemHandler> ITEM_HANDLER_CAPABILITY = null;
 
-    public static void register()
-    {
-        CapabilityManager.INSTANCE.register(IItemHandler.class, new Capability.IStorage<IItemHandler>()
-        {
+    public static void register() {
+        CapabilityManager.INSTANCE.register(IItemHandler.class, new Capability.IStorage<IItemHandler>() {
             @Override
-            public NBTBase writeNBT(Capability<IItemHandler> capability, IItemHandler instance, EnumFacing side)
-            {
+            public NBTBase writeNBT(Capability<IItemHandler> capability, IItemHandler instance, EnumFacing side) {
                 NBTTagList nbtTagList = new NBTTagList();
                 int size = instance.getSlots();
-                for (int i = 0; i < size; i++)
-                {
+                for (int i = 0; i < size; i++) {
                     ItemStack stack = instance.getStackInSlot(i);
-                    if (stack != null)
-                    {
+                    if (stack != null) {
                         NBTTagCompound itemTag = new NBTTagCompound();
                         itemTag.setInteger("Slot", i);
                         stack.writeToNBT(itemTag);
@@ -38,19 +32,16 @@ public class CapabilityItemHandler
             }
 
             @Override
-            public void readNBT(Capability<IItemHandler> capability, IItemHandler instance, EnumFacing side, NBTBase base)
-            {
+            public void readNBT(Capability<IItemHandler> capability, IItemHandler instance, EnumFacing side, NBTBase base) {
                 if (!(instance instanceof IItemHandlerModifiable))
                     throw new RuntimeException("IItemHandler instance does not implement IItemHandlerModifiable");
                 IItemHandlerModifiable itemHandlerModifiable = (IItemHandlerModifiable) instance;
                 NBTTagList tagList = (NBTTagList) base;
-                for (int i = 0; i < tagList.tagCount(); i++)
-                {
+                for (int i = 0; i < tagList.tagCount(); i++) {
                     NBTTagCompound itemTags = tagList.getCompoundTagAt(i);
                     int j = itemTags.getInteger("Slot");
 
-                    if (j >= 0 && j < instance.getSlots())
-                    {
+                    if (j >= 0 && j < instance.getSlots()) {
                         itemHandlerModifiable.setStackInSlot(j, ItemStack.loadItemStackFromNBT(itemTags));
                     }
                 }

@@ -1,8 +1,8 @@
 package net.minecraftforge.event.entity.player;
 
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
  * ArrowNockEvent is fired when a player begins using a bow.<br>
@@ -19,12 +19,10 @@ import net.minecraft.item.ItemStack;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class ArrowNockEvent extends PlayerEvent
-{
+public class ArrowNockEvent extends PlayerEvent {
     public ItemStack result;
-    
-    public ArrowNockEvent(EntityPlayer player, ItemStack result)
-    {
+
+    public ArrowNockEvent(EntityPlayer player, ItemStack result) {
         super(player);
         this.result = result;
     }

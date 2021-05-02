@@ -12,98 +12,89 @@
 
 package net.minecraftforge.fml.common.discovery;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.SetMultimap;
+import net.minecraftforge.fml.common.ModContainer;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collector;
 
-import net.minecraftforge.fml.common.ModContainer;
+public class ASMDataTable {
+    public final static class ASMData implements Cloneable {
+        private final ModCandidate candidate;
+        private final String annotationName;
+        private final String className;
+        private final String objectName;
+        private Map<String, Object> annotationInfo;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.SetMultimap;
-import org.apache.commons.lang3.tuple.Pair;
-
-public class ASMDataTable
-{
-    public final static class ASMData implements Cloneable
-    {
-        private ModCandidate candidate;
-        private String annotationName;
-        private String className;
-        private String objectName;
-        private Map<String,Object> annotationInfo;
-        public ASMData(ModCandidate candidate, String annotationName, String className, String objectName, Map<String,Object> info)
-        {
+        public ASMData(ModCandidate candidate, String annotationName, String className, String objectName, Map<String, Object> info) {
             this.candidate = candidate;
             this.annotationName = annotationName;
             this.className = className;
             this.objectName = objectName;
             this.annotationInfo = info;
         }
-        public ModCandidate getCandidate()
-        {
+
+        public ModCandidate getCandidate() {
             return candidate;
         }
-        public String getAnnotationName()
-        {
+
+        public String getAnnotationName() {
             return annotationName;
         }
-        public String getClassName()
-        {
+
+        public String getClassName() {
             return className;
         }
-        public String getObjectName()
-        {
+
+        public String getObjectName() {
             return objectName;
         }
-        public Map<String, Object> getAnnotationInfo()
-        {
+
+        public Map<String, Object> getAnnotationInfo() {
             return annotationInfo;
         }
 
-        public ASMData copy(Map<String,Object> newAnnotationInfo)
-        {
-            try
-            {
+        public ASMData copy(Map<String, Object> newAnnotationInfo) {
+            try {
                 ASMData clone = (ASMData) this.clone();
                 clone.annotationInfo = newAnnotationInfo;
                 return clone;
-            }
-            catch (CloneNotSupportedException e)
-            {
-                throw new RuntimeException("Unpossible", e);
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException("Impossible", e);
             }
         }
     }
 
-    private static class ModContainerPredicate implements Predicate<ASMData>
-    {
-        private ModContainer container;
-        public ModContainerPredicate(ModContainer container)
-        {
+    private static class ModContainerPredicate implements Predicate<ASMData> {
+        private final ModContainer container;
+
+        public ModContainerPredicate(ModContainer container) {
             this.container = container;
         }
+
         @Override
-        public boolean apply(ASMData data)
-        {
+        public boolean apply(ASMData data) {
             return container.getSource().equals(data.candidate.getModContainer());
         }
     }
+
     private final SetMultimap<String, ASMData> globalAnnotationData = HashMultimap.create();
-    private Map<ModContainer, SetMultimap<String,ASMData>> containerAnnotationData;
+    private Map<ModContainer, SetMultimap<String, ASMData>> containerAnnotationData;
 
-    private List<ModContainer> containers = Lists.newArrayList();
-    private SetMultimap<String,ModCandidate> packageMap = HashMultimap.create();
+    private final List<ModContainer> containers = Lists.newArrayList();
+    private final SetMultimap<String, ModCandidate> packageMap = HashMultimap.create();
 
-    public SetMultimap<String,ASMData> getAnnotationsFor(ModContainer container)
-    {
+    public SetMultimap<String, ASMData> getAnnotationsFor(ModContainer container) {
         if (containerAnnotationData == null) {
             containerAnnotationData = containers.parallelStream()
                 .map(cont -> Pair.of(cont, ImmutableSetMultimap.copyOf(Multimaps.filterValues(globalAnnotationData, new ModContainerPredicate(cont)))))
@@ -121,28 +112,23 @@ public class ASMDataTable
             ImmutableMap.Builder::build);
     }
 
-    public Set<ASMData> getAll(String annotation)
-    {
+    public Set<ASMData> getAll(String annotation) {
         return globalAnnotationData.get(annotation);
     }
 
-    public void addASMData(ModCandidate candidate, String annotation, String className, String objectName, Map<String,Object> annotationInfo)
-    {
+    public void addASMData(ModCandidate candidate, String annotation, String className, String objectName, Map<String, Object> annotationInfo) {
         globalAnnotationData.put(annotation, new ASMData(candidate, annotation, className, objectName, annotationInfo));
     }
 
-    public void addContainer(ModContainer container)
-    {
+    public void addContainer(ModContainer container) {
         this.containers.add(container);
     }
 
-    public void registerPackage(ModCandidate modCandidate, String pkg)
-    {
-        this.packageMap.put(pkg,modCandidate);
+    public void registerPackage(ModCandidate modCandidate, String pkg) {
+        this.packageMap.put(pkg, modCandidate);
     }
 
-    public Set<ModCandidate> getCandidatesFor(String pkg)
-    {
+    public Set<ModCandidate> getCandidatesFor(String pkg) {
         return this.packageMap.get(pkg);
     }
 }

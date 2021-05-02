@@ -1,9 +1,8 @@
 package net.minecraftforge.event.entity.player;
 
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
  * EntityInteractEvent is fired when a player interacts with an Entity.<br>
@@ -20,11 +19,10 @@ import net.minecraft.entity.player.EntityPlayer;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class EntityInteractEvent extends PlayerEvent
-{
+public class EntityInteractEvent extends PlayerEvent {
     public final Entity target;
-    public EntityInteractEvent(EntityPlayer player, Entity target)
-    {
+
+    public EntityInteractEvent(EntityPlayer player, Entity target) {
         super(player);
         this.target = target;
     }

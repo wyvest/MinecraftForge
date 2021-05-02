@@ -1,11 +1,11 @@
 package net.minecraftforge.event.entity.living;
 
-import java.util.List;
-
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraft.util.DamageSource;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.util.DamageSource;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+
+import java.util.List;
 
 /**
  * LivingDropsEvent is fired when an Entity's death causes dropped items to appear.<br>
@@ -27,15 +27,13 @@ import net.minecraft.entity.EntityLivingBase;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class LivingDropsEvent extends LivingEvent
-{
+public class LivingDropsEvent extends LivingEvent {
     public final DamageSource source;
     public final List<EntityItem> drops;
     public final int lootingLevel;
     public final boolean recentlyHit;
 
-    public LivingDropsEvent(EntityLivingBase entity, DamageSource source, List<EntityItem> drops, int lootingLevel, boolean recentlyHit)
-    {
+    public LivingDropsEvent(EntityLivingBase entity, DamageSource source, List<EntityItem> drops, int lootingLevel, boolean recentlyHit) {
         super(entity);
         this.source = source;
         this.drops = drops;

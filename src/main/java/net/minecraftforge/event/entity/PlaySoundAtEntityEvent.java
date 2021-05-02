@@ -1,7 +1,7 @@
 package net.minecraftforge.event.entity;
 
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.Entity;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
  * PlaySoundAtEntityEvent is fired a sound is to be played at an Entity<br>
@@ -24,16 +24,14 @@ import net.minecraft.entity.Entity;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
 @Cancelable
-public class PlaySoundAtEntityEvent extends EntityEvent
-{ 
+public class PlaySoundAtEntityEvent extends EntityEvent {
     public String name;
     public final float volume;
     public final float pitch;
     public float newVolume;
     public float newPitch;
-    
-    public PlaySoundAtEntityEvent(Entity entity, String name, float volume, float pitch)
-    {
+
+    public PlaySoundAtEntityEvent(Entity entity, String name, float volume, float pitch) {
         super(entity);
         this.name = name;
         this.volume = volume;

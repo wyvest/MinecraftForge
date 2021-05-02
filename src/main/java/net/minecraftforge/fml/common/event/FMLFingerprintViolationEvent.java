@@ -12,11 +12,11 @@
 
 package net.minecraftforge.fml.common.event;
 
-import java.io.File;
-import java.util.Set;
-
 import com.google.common.collect.ImmutableSet;
 import net.minecraftforge.fml.common.Mod;
+
+import java.io.File;
+import java.util.Set;
 
 
 /**
@@ -30,8 +30,7 @@ public class FMLFingerprintViolationEvent extends FMLEvent {
     public final File source;
     public final String expectedFingerprint;
 
-    public FMLFingerprintViolationEvent(boolean isDirectory, File source, ImmutableSet<String> fingerprints, String expectedFingerprint)
-    {
+    public FMLFingerprintViolationEvent(boolean isDirectory, File source, ImmutableSet<String> fingerprints, String expectedFingerprint) {
         super();
         this.isDirectory = isDirectory;
         this.source = source;

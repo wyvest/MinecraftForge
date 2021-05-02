@@ -12,21 +12,21 @@
 
 package net.minecraftforge.fml.client.config;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.util.EnumChatFormatting;
+import org.lwjgl.input.Keyboard;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.EnumChatFormatting;
 import static net.minecraftforge.fml.client.config.GuiUtils.RESET_CHAR;
 import static net.minecraftforge.fml.client.config.GuiUtils.UNDO_CHAR;
-
-import org.lwjgl.input.Keyboard;
 
 /**
  * This class is the base screen used for editing an array-type property. It provides a list of array entries for the user to edit.
@@ -34,8 +34,7 @@ import org.lwjgl.input.Keyboard;
  *
  * @author bspkrs
  */
-public class GuiEditArray extends GuiScreen
-{
+public class GuiEditArray extends GuiScreen {
     protected GuiScreen parentScreen;
     protected IConfigElement configElement;
     protected GuiEditArrayEntries entryList;
@@ -50,21 +49,20 @@ public class GuiEditArray extends GuiScreen
     protected List<String> toolTip;
     protected boolean enabled;
 
-    public GuiEditArray(GuiScreen parentScreen, IConfigElement configElement, int slotIndex, Object[] currentValues, boolean enabled)
-    {
+    public GuiEditArray(GuiScreen parentScreen, IConfigElement configElement, int slotIndex, Object[] currentValues, boolean enabled) {
         this.mc = Minecraft.getMinecraft();
         this.parentScreen = parentScreen;
         this.configElement = configElement;
         this.slotIndex = slotIndex;
         this.beforeValues = currentValues;
         this.currentValues = currentValues;
-        this.toolTip = new ArrayList<String>();
+        this.toolTip = new ArrayList<>();
         this.enabled = enabled;
         String propName = I18n.format(configElement.getLanguageKey());
         String comment;
 
         comment = I18n.format(configElement.getLanguageKey() + ".tooltip",
-                "\n" + EnumChatFormatting.AQUA, configElement.getDefault(), configElement.getMinValue(), configElement.getMaxValue());
+            "\n" + EnumChatFormatting.AQUA, configElement.getDefault(), configElement.getMinValue(), configElement.getMaxValue());
 
         if (!comment.equals(configElement.getLanguageKey() + ".tooltip"))
             Collections.addAll(toolTip, (EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.YELLOW + comment).split("\n"));
@@ -73,28 +71,22 @@ public class GuiEditArray extends GuiScreen
         else
             Collections.addAll(toolTip, (EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.RED + "No tooltip defined.").split("\n"));
 
-        if (parentScreen instanceof GuiConfig)
-        {
+        if (parentScreen instanceof GuiConfig) {
             this.title = ((GuiConfig) parentScreen).title;
-            if (((GuiConfig) parentScreen).titleLine2 != null)
-            {
+            if (((GuiConfig) parentScreen).titleLine2 != null) {
                 this.titleLine2 = ((GuiConfig) parentScreen).titleLine2;
                 this.titleLine3 = I18n.format(configElement.getLanguageKey());
-            }
-            else
+            } else
                 this.titleLine2 = I18n.format(configElement.getLanguageKey());
             this.tooltipHoverChecker = new HoverChecker(28, 37, 0, parentScreen.width, 800);
-        }
-        else
-        {
+        } else {
             this.title = I18n.format(configElement.getLanguageKey());
             this.tooltipHoverChecker = new HoverChecker(8, 17, 0, parentScreen.width, 800);
         }
     }
 
     @Override
-    public void initGui()
-    {
+    public void initGui() {
         this.entryList = new GuiEditArrayEntries(this, this.mc, this.configElement, this.beforeValues, this.currentValues);
 
         int undoGlyphWidth = mc.fontRendererObj.getStringWidth(UNDO_CHAR) * 2;
@@ -105,66 +97,51 @@ public class GuiEditArray extends GuiScreen
         int buttonWidthHalf = (doneWidth + 5 + undoWidth + 5 + resetWidth) / 2;
         this.buttonList.add(btnDone = new GuiButtonExt(2000, this.width / 2 - buttonWidthHalf, this.height - 29, doneWidth, 20, I18n.format("gui.done")));
         this.buttonList.add(btnDefault = new GuiUnicodeGlyphButton(2001, this.width / 2 - buttonWidthHalf + doneWidth + 5 + undoWidth + 5,
-                this.height - 29, resetWidth, 20, " " + I18n.format("fml.configgui.tooltip.resetToDefault"), RESET_CHAR, 2.0F));
+            this.height - 29, resetWidth, 20, " " + I18n.format("fml.configgui.tooltip.resetToDefault"), RESET_CHAR, 2.0F));
         this.buttonList.add(btnUndoChanges = new GuiUnicodeGlyphButton(2002, this.width / 2 - buttonWidthHalf + doneWidth + 5,
-                this.height - 29, undoWidth, 20, " " + I18n.format("fml.configgui.tooltip.undoChanges"), UNDO_CHAR, 2.0F));
+            this.height - 29, undoWidth, 20, " " + I18n.format("fml.configgui.tooltip.undoChanges"), UNDO_CHAR, 2.0F));
     }
 
     @Override
-    protected void actionPerformed(GuiButton button)
-    {
-        if (button.id == 2000)
-        {
-            try
-            {
+    protected void actionPerformed(GuiButton button) {
+        if (button.id == 2000) {
+            try {
                 this.entryList.saveListChanges();
-            }
-            catch (Throwable e)
-            {
+            } catch (Throwable e) {
                 e.printStackTrace();
             }
             this.mc.displayGuiScreen(this.parentScreen);
-        }
-        else if (button.id == 2001)
-        {
+        } else if (button.id == 2001) {
             this.currentValues = configElement.getDefaults();
             this.entryList = new GuiEditArrayEntries(this, this.mc, this.configElement, this.beforeValues, this.currentValues);
-        }
-        else if (button.id == 2002)
-        {
+        } else if (button.id == 2002) {
             this.currentValues = Arrays.copyOf(beforeValues, beforeValues.length);
             this.entryList = new GuiEditArrayEntries(this, this.mc, this.configElement, this.beforeValues, this.currentValues);
         }
     }
 
-    public void handleMouseInput() throws IOException
-    {
+    public void handleMouseInput() throws IOException {
         super.handleMouseInput();
         this.entryList.handleMouseInput();
     }
 
     @Override
-    protected void mouseClicked(int x, int y, int mouseEvent) throws IOException
-    {
-        if (mouseEvent != 0 || !this.entryList.mouseClicked(x, y, mouseEvent))
-        {
+    protected void mouseClicked(int x, int y, int mouseEvent) throws IOException {
+        if (mouseEvent != 0 || !this.entryList.mouseClicked(x, y, mouseEvent)) {
             this.entryList.mouseClickedPassThru(x, y, mouseEvent);
             super.mouseClicked(x, y, mouseEvent);
         }
     }
 
     @Override
-    protected void mouseReleased(int x, int y, int mouseEvent)
-    {
-        if (mouseEvent != 0 || !this.entryList.mouseReleased(x, y, mouseEvent))
-        {
+    protected void mouseReleased(int x, int y, int mouseEvent) {
+        if (mouseEvent != 0 || !this.entryList.mouseReleased(x, y, mouseEvent)) {
             super.mouseReleased(x, y, mouseEvent);
         }
     }
 
     @Override
-    protected void keyTyped(char eventChar, int eventKey)
-    {
+    protected void keyTyped(char eventChar, int eventKey) {
         if (eventKey == Keyboard.KEY_ESCAPE)
             this.mc.displayGuiScreen(parentScreen);
         else
@@ -172,15 +149,13 @@ public class GuiEditArray extends GuiScreen
     }
 
     @Override
-    public void updateScreen()
-    {
+    public void updateScreen() {
         super.updateScreen();
         this.entryList.updateScreen();
     }
 
     @Override
-    public void drawScreen(int par1, int par2, float par3)
-    {
+    public void drawScreen(int par1, int par2, float par3) {
         this.drawDefaultBackground();
         this.entryList.drawScreen(par1, par2, par3);
         this.drawCenteredString(this.fontRendererObj, this.title, this.width / 2, 8, 16777215);
@@ -201,8 +176,7 @@ public class GuiEditArray extends GuiScreen
             drawToolTip(this.toolTip, par1, par2);
     }
 
-    public void drawToolTip(List<String> stringList, int x, int y)
-    {
+    public void drawToolTip(List<String> stringList, int x, int y) {
         GuiUtils.drawHoveringText(stringList, x, y, width, height, 300, fontRendererObj);
     }
 }

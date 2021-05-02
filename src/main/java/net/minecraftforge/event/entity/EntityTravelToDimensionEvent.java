@@ -2,7 +2,6 @@ package net.minecraftforge.event.entity;
 
 import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 
 /**
  * EntityTravelToDimensionEvent is fired before an Entity travels to a dimension.<br>
@@ -17,12 +16,10 @@ import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
 @Cancelable
-public class EntityTravelToDimensionEvent extends EntityEvent
-{
+public class EntityTravelToDimensionEvent extends EntityEvent {
     public final int dimension;
 
-    public EntityTravelToDimensionEvent(Entity entity, int dimension)
-    {
+    public EntityTravelToDimensionEvent(Entity entity, int dimension) {
         super(entity);
         this.dimension = dimension;
     }

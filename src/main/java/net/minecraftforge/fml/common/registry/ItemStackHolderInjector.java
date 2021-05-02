@@ -1,30 +1,27 @@
 package net.minecraftforge.fml.common.registry;
 
+import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.discovery.ASMDataTable;
+import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
+import org.apache.logging.log4j.Level;
+
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.discovery.ASMDataTable;
-import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 
-import org.apache.logging.log4j.Level;
-
-import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
-
-public enum ItemStackHolderInjector
-{
+public enum ItemStackHolderInjector {
     INSTANCE;
 
-    private List<ItemStackHolderRef> itemStackHolders = Lists.newArrayList();
+    private final List<ItemStackHolderRef> itemStackHolders = Lists.newArrayList();
 
     public void inject() {
         FMLLog.getLogger().log(Level.INFO, "Injecting itemstacks");
-        for (ItemStackHolderRef ishr: itemStackHolders) {
+        for (ItemStackHolderRef ishr : itemStackHolders) {
             ishr.apply();
         }
         FMLLog.getLogger().log(Level.INFO, "Itemstack injection complete");
@@ -34,8 +31,7 @@ public enum ItemStackHolderInjector
         FMLLog.info("Identifying ItemStackHolder annotations");
         Set<ASMData> allItemStackHolders = table.getAll(GameRegistry.ItemStackHolder.class.getName());
         Map<String, Class<?>> classCache = Maps.newHashMap();
-        for (ASMData data : allItemStackHolders)
-        {
+        for (ASMData data : allItemStackHolders) {
             String className = data.getClassName();
             String annotationTarget = data.getObjectName();
             String value = (String) data.getAnnotationInfo().get("value");
@@ -47,34 +43,24 @@ public enum ItemStackHolderInjector
 
     }
 
-    private void addHolder(Map<String, Class<?>> classCache, String className, String annotationTarget, String value, Integer meta, String nbt)
-    {
+    private void addHolder(Map<String, Class<?>> classCache, String className, String annotationTarget, String value, Integer meta, String nbt) {
         Class<?> clazz;
-        if (classCache.containsKey(className))
-        {
+        if (classCache.containsKey(className)) {
             clazz = classCache.get(className);
-        }
-        else
-        {
-            try
-            {
+        } else {
+            try {
                 clazz = Class.forName(className, true, getClass().getClassLoader());
                 classCache.put(className, clazz);
-            }
-            catch (Exception ex)
-            {
-                // unpossible?
+            } catch (Exception ex) {
+                // impossible?
                 throw Throwables.propagate(ex);
             }
         }
-        try
-        {
+        try {
             Field f = clazz.getField(annotationTarget);
             itemStackHolders.add(new ItemStackHolderRef(f, value, meta, nbt));
-        }
-        catch (Exception ex)
-        {
-            // unpossible?
+        } catch (Exception ex) {
+            // impossible?
             throw Throwables.propagate(ex);
         }
     }

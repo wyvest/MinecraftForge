@@ -13,7 +13,6 @@
 package net.minecraftforge.fml.common;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.*;
@@ -56,7 +55,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * The loader class performs the actual loading of the mod code from disk.
@@ -110,7 +115,7 @@ public class Loader {
     /**
      * The class loader we load the mods into.
      */
-    private ModClassLoader modClassLoader;
+    private final ModClassLoader modClassLoader;
     /**
      * The sorted list of mods.
      */
@@ -129,8 +134,8 @@ public class Loader {
     private File canonicalConfigDir;
     private File canonicalModsDir;
     private LoadController modController;
-    private MinecraftDummyContainer minecraft;
-    private MCPDummyContainer mcp;
+    private final MinecraftDummyContainer minecraft;
+    private final MCPDummyContainer mcp;
 
     private static File minecraftDir;
     private static List<String> injectedContainers;
@@ -223,7 +228,7 @@ public class Loader {
 
             FMLLog.finer("All mod requirements are satisfied");
 
-            reverseDependencies = Multimaps.invertFrom(reqList, ArrayListMultimap.<String, String>create());
+            reverseDependencies = Multimaps.invertFrom(reqList, ArrayListMultimap.create());
             ModSorter sorter = new ModSorter(getActiveModList(), namedMods);
 
             try {
@@ -287,7 +292,7 @@ public class Loader {
             try {
                 mc = (ModContainer) Class.forName(cont, true, modClassLoader).newInstance();
             } catch (Exception e) {
-                FMLLog.log(Level.ERROR, e, "A problem occured instantiating the injected mod container %s", cont);
+                FMLLog.log(Level.ERROR, e, "A problem occurred instantiating the injected mod container %s", cont);
                 throw new LoaderException(e);
             }
             mods.add(new InjectedModContainer(mc, mc.getSource()));
@@ -357,7 +362,7 @@ public class Loader {
             canonicalModsDir = modsDir.getCanonicalFile();
         } catch (IOException ioe) {
             FMLLog.log(Level.ERROR, ioe, "Failed to resolve loader directories: mods : %s ; config %s", canonicalModsDir.getAbsolutePath(),
-                    configDir.getAbsolutePath());
+                configDir.getAbsolutePath());
             throw new LoaderException(ioe);
         }
 
@@ -473,8 +478,8 @@ public class Loader {
         String forcedModList = System.getProperty("fml.modStates", "");
         FMLLog.finer("Received a system property request '%s'", forcedModList);
         Map<String, String> sysPropertyStateList = Splitter.on(CharMatcher.anyOf(";:"))
-                .omitEmptyStrings().trimResults().withKeyValueSeparator("=")
-                .split(forcedModList);
+            .omitEmptyStrings().trimResults().withKeyValueSeparator("=")
+            .split(forcedModList);
         FMLLog.finer("System property request managing the state of %d mods", sysPropertyStateList.size());
         Map<String, String> modStates = Maps.newHashMap();
 
@@ -751,8 +756,8 @@ public class Loader {
      * Fire a FMLMissingMappingsEvent to let mods determine how blocks/items defined in the world
      * save, but missing from the runtime, are to be handled.
      *
-     * @param missingBlocks      Map containing missing names with their associated id, blocks need to come before items for remapping.
-     * @param isLocalWorld Whether this is executing for a world load (local/server) or a client.
+     * @param missingBlocks Map containing missing names with their associated id, blocks need to come before items for remapping.
+     * @param isLocalWorld  Whether this is executing for a world load (local/server) or a client.
      * @return List with the mapping results.
      */
     public List<String> fireMissingMappingEvent(Map<ResourceLocation, Integer> missingBlocks, Map<ResourceLocation, Integer> missingItems, boolean isLocalWorld, Map<ResourceLocation, Integer[]> remapBlocks, Map<ResourceLocation, Integer[]> remapItems) {
@@ -846,8 +851,8 @@ public class Loader {
         progressBar = null;
     }
 
-    private ListMultimap<String, ArtifactVersion> injectedBefore = ArrayListMultimap.create();
-    private ListMultimap<String, ArtifactVersion> injectedAfter = ArrayListMultimap.create();
+    private final ListMultimap<String, ArtifactVersion> injectedBefore = ArrayListMultimap.create();
+    private final ListMultimap<String, ArtifactVersion> injectedAfter = ArrayListMultimap.create();
 
     private void readInjectedDependencies() {
         File injectedDepFile = new File(getConfigDir(), "injectedDependencies.json");

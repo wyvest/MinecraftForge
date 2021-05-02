@@ -16,16 +16,26 @@ import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.IModGuiFactory;
-import net.minecraftforge.fml.client.config.*;
+import net.minecraftforge.fml.client.config.ConfigGuiType;
+import net.minecraftforge.fml.client.config.DummyConfigElement;
 import net.minecraftforge.fml.client.config.DummyConfigElement.DummyCategoryElement;
+import net.minecraftforge.fml.client.config.GuiConfig;
+import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.BooleanEntry;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.CategoryEntry;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.SelectValueEntry;
+import net.minecraftforge.fml.client.config.IConfigElement;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import static net.minecraftforge.common.ForgeModContainer.VERSION_CHECK_CAT;
 
@@ -118,10 +128,10 @@ public class ForgeGuiFactory implements IModGuiFactory {
                 // This GuiConfig object specifies the configID of the object and as such will force-save when it is closed. The parent
                 // GuiConfig object's entryList will also be refreshed to reflect the changes.
                 return new GuiConfig(this.owningScreen,
-                        (new ConfigElement(ForgeModContainer.getConfig().getCategory(Configuration.CATEGORY_GENERAL))).getChildElements(),
-                        this.owningScreen.modID, Configuration.CATEGORY_GENERAL, this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,
-                        this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart,
-                        GuiConfig.getAbridgedConfigPath(ForgeModContainer.getConfig().toString()));
+                    (new ConfigElement(ForgeModContainer.getConfig().getCategory(Configuration.CATEGORY_GENERAL))).getChildElements(),
+                    this.owningScreen.modID, Configuration.CATEGORY_GENERAL, this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,
+                    this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart,
+                    GuiConfig.getAbridgedConfigPath(ForgeModContainer.getConfig().toString()));
             }
         }
 
@@ -139,10 +149,10 @@ public class ForgeGuiFactory implements IModGuiFactory {
                 // This GuiConfig object specifies the configID of the object and as such will force-save when it is closed. The parent
                 // GuiConfig object's entryList will also be refreshed to reflect the changes.
                 return new GuiConfig(this.owningScreen,
-                        (new ConfigElement(ForgeModContainer.getConfig().getCategory(Configuration.CATEGORY_EXPERIMENTAL))).getChildElements(),
-                        this.owningScreen.modID, Configuration.CATEGORY_EXPERIMENTAL, this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,
-                        this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart,
-                        GuiConfig.getAbridgedConfigPath(ForgeModContainer.getConfig().toString()));
+                    (new ConfigElement(ForgeModContainer.getConfig().getCategory(Configuration.CATEGORY_EXPERIMENTAL))).getChildElements(),
+                    this.owningScreen.modID, Configuration.CATEGORY_EXPERIMENTAL, this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,
+                    this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart,
+                    GuiConfig.getAbridgedConfigPath(ForgeModContainer.getConfig().toString()));
             }
         }
 
@@ -160,10 +170,10 @@ public class ForgeGuiFactory implements IModGuiFactory {
                 // This GuiConfig object specifies the configID of the object and as such will force-save when it is closed. The parent
                 // GuiConfig object's entryList will also be refreshed to reflect the changes.
                 return new GuiConfig(this.owningScreen,
-                        (new ConfigElement(ForgeModContainer.getConfig().getCategory(Configuration.CATEGORY_CLIENT))).getChildElements(),
-                        this.owningScreen.modID, Configuration.CATEGORY_CLIENT, this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,
-                        this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart,
-                        GuiConfig.getAbridgedConfigPath(ForgeModContainer.getConfig().toString()));
+                    (new ConfigElement(ForgeModContainer.getConfig().getCategory(Configuration.CATEGORY_CLIENT))).getChildElements(),
+                    this.owningScreen.modID, Configuration.CATEGORY_CLIENT, this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,
+                    this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart,
+                    GuiConfig.getAbridgedConfigPath(ForgeModContainer.getConfig().toString()));
             }
         }
 
@@ -178,19 +188,19 @@ public class ForgeGuiFactory implements IModGuiFactory {
 
             @Override
             protected GuiScreen buildChildScreen() {
-                List<IConfigElement> list = new ArrayList<IConfigElement>();
+                List<IConfigElement> list = new ArrayList<>();
 
                 list.add(new DummyCategoryElement("forgeChunkLoadingModCfg", "forge.configgui.ctgy.forgeChunkLoadingModConfig",
-                        ModOverridesEntry.class));
+                    ModOverridesEntry.class));
                 list.addAll((new ConfigElement(ForgeChunkManager.getDefaultsCategory())).getChildElements());
 
                 // This GuiConfig object specifies the configID of the object and as such will force-save when it is closed. The parent
                 // GuiConfig object's propertyList will also be refreshed to reflect the changes.
                 return new GuiConfig(this.owningScreen, list, this.owningScreen.modID, "chunkLoader",
-                        this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,
-                        this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart,
-                        GuiConfig.getAbridgedConfigPath(ForgeChunkManager.getConfig().toString()),
-                        I18n.format("forge.configgui.ctgy.forgeChunkLoadingConfig"));
+                    this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,
+                    this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart,
+                    GuiConfig.getAbridgedConfigPath(ForgeChunkManager.getConfig().toString()),
+                    I18n.format("forge.configgui.ctgy.forgeChunkLoadingConfig"));
             }
         }
 
@@ -206,12 +216,12 @@ public class ForgeGuiFactory implements IModGuiFactory {
             @Override
             protected GuiScreen buildChildScreen() {
                 ConfigCategory cfg = ForgeModContainer.getConfig().getCategory(VERSION_CHECK_CAT);
-                Map<String, Property> values = new HashMap<String, Property>(cfg.getValues());
+                Map<String, Property> values = new HashMap<>(cfg.getValues());
                 values.remove("Global");
 
                 Property global = ForgeModContainer.getConfig().get(VERSION_CHECK_CAT, "Global", true);
 
-                List<Property> props = new ArrayList<Property>();
+                List<Property> props = new ArrayList<>();
 
                 for (ModContainer mod : ForgeVersion.gatherMods().keySet()) {
                     values.remove(mod.getModId());
@@ -220,7 +230,7 @@ public class ForgeGuiFactory implements IModGuiFactory {
                 props.addAll(values.values()); // Add any left overs from the config
                 props.sort(Comparator.comparing(Property::getName));
 
-                List<IConfigElement> list = new ArrayList<IConfigElement>();
+                List<IConfigElement> list = new ArrayList<>();
                 list.add(new ConfigElement(global));
                 for (Property prop : props) {
                     list.add(new ConfigElement(prop));
@@ -229,9 +239,9 @@ public class ForgeGuiFactory implements IModGuiFactory {
                 // This GuiConfig object specifies the configID of the object and as such will force-save when it is closed. The parent
                 // GuiConfig object's propertyList will also be refreshed to reflect the changes.
                 return new GuiConfig(this.owningScreen,
-                        list,
-                        this.owningScreen.modID, VERSION_CHECK_CAT, true, true,
-                        GuiConfig.getAbridgedConfigPath(ForgeModContainer.getConfig().toString()));
+                    list,
+                    this.owningScreen.modID, VERSION_CHECK_CAT, true, true,
+                    GuiConfig.getAbridgedConfigPath(ForgeModContainer.getConfig().toString()));
             }
         }
 
@@ -250,17 +260,17 @@ public class ForgeGuiFactory implements IModGuiFactory {
              */
             @Override
             protected GuiScreen buildChildScreen() {
-                List<IConfigElement> list = new ArrayList<IConfigElement>();
+                List<IConfigElement> list = new ArrayList<>();
 
                 list.add(new DummyCategoryElement("addForgeChunkLoadingModCfg", "forge.configgui.ctgy.forgeChunkLoadingAddModConfig",
-                        AddModOverrideEntry.class));
+                    AddModOverrideEntry.class));
                 for (ConfigCategory cc : ForgeChunkManager.getModCategories())
                     list.add(new ConfigElement(cc));
 
                 return new GuiConfig(this.owningScreen, list, this.owningScreen.modID,
-                        this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,
-                        this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart, this.owningScreen.title,
-                        I18n.format("forge.configgui.ctgy.forgeChunkLoadingModConfig"));
+                    this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,
+                    this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart, this.owningScreen.title,
+                    I18n.format("forge.configgui.ctgy.forgeChunkLoadingModConfig"));
             }
 
             /**
@@ -271,7 +281,7 @@ public class ForgeGuiFactory implements IModGuiFactory {
             public boolean enabled() {
                 for (IConfigEntry entry : this.owningEntryList.listEntries) {
                     if (entry.getName().equals("enabled") && entry instanceof BooleanEntry) {
-                        return Boolean.valueOf(entry.getCurrentValue().toString());
+                        return Boolean.parseBoolean(entry.getCurrentValue().toString());
                     }
                 }
 
@@ -302,7 +312,7 @@ public class ForgeGuiFactory implements IModGuiFactory {
                         if (!child.initEntries.contains(ice) && ForgeChunkManager.getConfig().hasCategory(ice.getName()))
                             ForgeChunkManager.getConfig().removeCategory(ForgeChunkManager.getConfig().getCategory(ice.getName()));
 
-                    child.entryList.listEntries = new ArrayList<IConfigEntry>(child.initEntries);
+                    child.entryList.listEntries = new ArrayList<>(child.initEntries);
                 }
             }
         }
@@ -317,16 +327,16 @@ public class ForgeGuiFactory implements IModGuiFactory {
 
             @Override
             protected GuiScreen buildChildScreen() {
-                List<IConfigElement> list = new ArrayList<IConfigElement>();
+                List<IConfigElement> list = new ArrayList<>();
 
                 list.add(new DummyConfigElement("modID", "", ConfigGuiType.STRING, "forge.configgui.modID").setCustomListEntryClass(ModIDEntry.class));
                 list.add(new ConfigElement(new Property("maximumTicketCount", "200", Property.Type.INTEGER, "forge.configgui.maximumTicketCount")));
                 list.add(new ConfigElement(new Property("maximumChunksPerTicket", "25", Property.Type.INTEGER, "forge.configgui.maximumChunksPerTicket")));
 
                 return new GuiConfig(this.owningScreen, list, this.owningScreen.modID,
-                        this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,
-                        this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart, this.owningScreen.title,
-                        I18n.format("forge.configgui.ctgy.forgeChunkLoadingAddModConfig"));
+                    this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,
+                    this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart, this.owningScreen.title,
+                    I18n.format("forge.configgui.ctgy.forgeChunkLoadingAddModConfig"));
             }
 
             @Override
@@ -347,7 +357,7 @@ public class ForgeGuiFactory implements IModGuiFactory {
             }
 
             private static Map<Object, String> getSelectableValues() {
-                Map<Object, String> selectableValues = new TreeMap<Object, String>();
+                Map<Object, String> selectableValues = new TreeMap<>();
 
                 for (ModContainer mod : Loader.instance().getActiveModList())
                     // only add mods to the list that have a non-immutable ModContainer
@@ -370,9 +380,9 @@ public class ForgeGuiFactory implements IModGuiFactory {
                     this.owningEntryList.saveConfigElements();
                     for (IConfigElement ice : this.owningScreen.configElements)
                         if ("maximumTicketCount".equals(ice.getName()))
-                            maxTickets = Integer.valueOf(ice.get().toString());
+                            maxTickets = Integer.parseInt(ice.get().toString());
                         else if ("maximumChunksPerTicket".equals(ice.getName()))
-                            maxChunks = Integer.valueOf(ice.get().toString());
+                            maxChunks = Integer.parseInt(ice.get().toString());
 
                     ForgeChunkManager.addConfigProperty(modObject, "maximumTicketCount", String.valueOf(maxTickets), Property.Type.INTEGER);
                     ForgeChunkManager.addConfigProperty(modObject, "maximumChunksPerTicket", String.valueOf(maxChunks), Property.Type.INTEGER);

@@ -21,8 +21,18 @@ import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fml.client.FMLFileResourcePack;
 import net.minecraftforge.fml.client.FMLFolderResourcePack;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
-import net.minecraftforge.fml.common.*;
-import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.DummyModContainer;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.LoadController;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModMetadata;
+import net.minecraftforge.fml.common.WorldAccessContainer;
+import net.minecraftforge.fml.common.event.FMLConstructionEvent;
+import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -41,7 +51,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static net.minecraftforge.common.config.Configuration.*;
+import static net.minecraftforge.common.config.Configuration.CATEGORY_CLIENT;
+import static net.minecraftforge.common.config.Configuration.CATEGORY_EXPERIMENTAL;
+import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
 
 public class ForgeModContainer extends DummyModContainer implements WorldAccessContainer {
     public static final String VERSION_CHECK_CAT = "version_checking";
@@ -82,14 +94,14 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         meta.credits = "Made possible with help from many people";
         meta.authorList = Arrays.asList("LexManos", "cpw", "fry");
         meta.description = "Minecraft Forge is a common open source API allowing a broad range of mods " +
-                "to work cooperatively together. It allows many mods to be created without " +
-                "them editing the main Minecraft code.";
+            "to work cooperatively together. It allows many mods to be created without " +
+            "them editing the main Minecraft code.";
         meta.url = "https://minecraftforge.net";
         meta.screenshots = new String[0];
         meta.logoFile = "/forge_logo.png";
         try {
             updateJSONUrl = new URL("https://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json");
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException ignored) {
         }
 
         config = null;
@@ -141,7 +153,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "clumpingThreshold", 64,
-                "Controls the number threshold at which Packet51 is preferred over Packet52, default and minimum 64, maximum 1024", 64, 1024);
+            "Controls the number threshold at which Packet51 is preferred over Packet52, default and minimum 64, maximum 1024", 64, 1024);
         prop.setLanguageKey("forge.configgui.clumpingThreshold").setRequiresWorldRestart(true);
         clumpingThreshold = prop.getInt(64);
         if (clumpingThreshold > 1024 || clumpingThreshold < 64) {
@@ -215,47 +227,47 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "zombieBaseSummonChance", 0.1,
-                "Base zombie summoning spawn chance. Allows changing the bonus zombie summoning mechanic.", 0.0D, 1.0D);
+            "Base zombie summoning spawn chance. Allows changing the bonus zombie summoning mechanic.", 0.0D, 1.0D);
         prop.setLanguageKey("forge.configgui.zombieBaseSummonChance").setRequiresWorldRestart(true);
         zombieSummonBaseChance = prop.getDouble(0.1);
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "zombieBabyChance", 0.05,
-                "Chance that a zombie (or subclass) is a baby. Allows changing the zombie spawning mechanic.", 0.0D, 1.0D);
+            "Chance that a zombie (or subclass) is a baby. Allows changing the zombie spawning mechanic.", 0.0D, 1.0D);
         prop.setLanguageKey("forge.configgui.zombieBabyChance").setRequiresWorldRestart(true);
         zombieBabyChance = (float) prop.getDouble(0.05);
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "defaultSpawnFuzz", 20,
-                "The spawn fuzz when a player respawns in the world, this is controlable by WorldType, this config option is for the default overworld.",
-                1, Integer.MAX_VALUE);
+            "The spawn fuzz when a player respawns in the world, this is controlable by WorldType, this config option is for the default overworld.",
+            1, Integer.MAX_VALUE);
         prop.setLanguageKey("forge.configgui.spawnfuzz").setRequiresWorldRestart(false);
         defaultSpawnFuzz = prop.getInt(20);
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "spawnHasFuzz", Boolean.TRUE,
-                "If the overworld has ANY spawn fuzz at all. If not, the spawn will always be the exact same location.");
+            "If the overworld has ANY spawn fuzz at all. If not, the spawn will always be the exact same location.");
         prop.setLanguageKey("forge.configgui.hasspawnfuzz").setRequiresWorldRestart(false);
         defaultHasSpawnFuzz = prop.getBoolean(Boolean.TRUE);
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "forgeLightPipelineEnabled", Boolean.TRUE,
-                "Enable the forge block rendering pipeline - fixes the lighting of custom models.");
+            "Enable the forge block rendering pipeline - fixes the lighting of custom models.");
         forgeLightPipelineEnabled = prop.getBoolean(Boolean.TRUE);
         propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(CATEGORY_GENERAL, propOrder);
 
-        propOrder = new ArrayList<String>();
+        propOrder = new ArrayList<>();
         prop = config.get(VERSION_CHECK_CAT, "Global", true, "Enable the entire mod update check system. This only applies to mods using the Forge system.");
         propOrder.add("Global");
 
         config.setCategoryPropertyOrder(VERSION_CHECK_CAT, propOrder);
 
         // Client-Side only properties
-        propOrder = new ArrayList<String>();
+        propOrder = new ArrayList<>();
         prop = config.get(Configuration.CATEGORY_CLIENT, "replaceVanillaBucketModel", Boolean.FALSE,
-                "Replace the vanilla bucket models with Forges own dynamic bucket model. Unifies bucket visuals if a mod uses the Forge bucket model.");
+            "Replace the vanilla bucket models with Forges own dynamic bucket model. Unifies bucket visuals if a mod uses the Forge bucket model.");
         prop.setLanguageKey("forge.configgui.replaceBuckets").setRequiresMcRestart(true);
         replaceVanillaBucketModel = prop.getBoolean(Boolean.FALSE);
         propOrder.add(prop.getName());
@@ -385,31 +397,31 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         // All the packages which are part of forge. Only needs updating if new logic is added
         // that requires event handlers
         return ImmutableList.of(
-                "net.minecraftforge.classloading",
-                "net.minecraftforge.client",
-                "net.minecraftforge.client.event",
-                "net.minecraftforge.client.event.sound",
-                "net.minecraftforge.client.model",
-                "net.minecraftforge.client.model.obj",
-                "net.minecraftforge.client.model.techne",
-                "net.minecraftforge.common",
-                "net.minecraftforge.common.config",
-                "net.minecraftforge.common.network",
-                "net.minecraftforge.common.util",
-                "net.minecraftforge.event",
-                "net.minecraftforge.event.brewing",
-                "net.minecraftforge.event.entity",
-                "net.minecraftforge.event.entity.item",
-                "net.minecraftforge.event.entity.living",
-                "net.minecraftforge.event.entity.minecart",
-                "net.minecraftforge.event.entity.player",
-                "net.minecraftforge.event.terraingen",
-                "net.minecraftforge.event.world",
-                "net.minecraftforge.fluids",
-                "net.minecraftforge.oredict",
-                "net.minecraftforge.server",
-                "net.minecraftforge.server.command",
-                "net.minecraftforge.transformers"
+            "net.minecraftforge.classloading",
+            "net.minecraftforge.client",
+            "net.minecraftforge.client.event",
+            "net.minecraftforge.client.event.sound",
+            "net.minecraftforge.client.model",
+            "net.minecraftforge.client.model.obj",
+            "net.minecraftforge.client.model.techne",
+            "net.minecraftforge.common",
+            "net.minecraftforge.common.config",
+            "net.minecraftforge.common.network",
+            "net.minecraftforge.common.util",
+            "net.minecraftforge.event",
+            "net.minecraftforge.event.brewing",
+            "net.minecraftforge.event.entity",
+            "net.minecraftforge.event.entity.item",
+            "net.minecraftforge.event.entity.living",
+            "net.minecraftforge.event.entity.minecart",
+            "net.minecraftforge.event.entity.player",
+            "net.minecraftforge.event.terraingen",
+            "net.minecraftforge.event.world",
+            "net.minecraftforge.fluids",
+            "net.minecraftforge.oredict",
+            "net.minecraftforge.server",
+            "net.minecraftforge.server.command",
+            "net.minecraftforge.transformers"
         );
     }
 
