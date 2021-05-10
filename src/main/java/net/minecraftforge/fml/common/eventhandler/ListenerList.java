@@ -1,6 +1,7 @@
 package net.minecraftforge.fml.common.eventhandler;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,6 +99,7 @@ public class ListenerList {
         private IEventListener[] listeners;
         private final ArrayList<ArrayList<IEventListener>> priorities;
         private ListenerListInst parent;
+        private List<ListenerListInst> children;
 
         private ListenerListInst() {
             int count = EventPriority.values().length;
@@ -115,11 +117,13 @@ public class ListenerList {
             priorities.clear();
             parent = null;
             listeners = null;
+            if (children != null) children.clear();
         }
 
         private ListenerListInst(ListenerListInst parent) {
             this();
             this.parent = parent;
+            this.parent.addChild(this);
         }
 
         /**
@@ -155,7 +159,21 @@ public class ListenerList {
         }
 
         protected boolean shouldRebuild() {
-            return rebuild || (parent != null && parent.shouldRebuild());
+            return rebuild;
+        }
+
+        protected void forceRebuild() {
+            this.rebuild = true;
+            if (this.children != null) {
+                for (ListenerListInst child : this.children) {
+                    child.forceRebuild();
+                }
+            }
+        }
+
+        private void addChild(ListenerListInst child) {
+            if (this.children == null) this.children = Lists.newArrayList();
+            this.children.add(child);
         }
 
         /**
@@ -180,13 +198,13 @@ public class ListenerList {
 
         public void register(EventPriority priority, IEventListener listener) {
             priorities.get(priority.ordinal()).add(listener);
-            rebuild = true;
+            this.forceRebuild();
         }
 
         public void unregister(IEventListener listener) {
             for (ArrayList<IEventListener> list : priorities) {
                 if (list.remove(listener)) {
-                    rebuild = true;
+                    this.forceRebuild();
                 }
             }
         }
