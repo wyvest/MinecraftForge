@@ -13,6 +13,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.functions.GenericIterableFactory;
 import net.minecraftforge.fml.common.registry.RegistryDelegate.Delegate;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Level;
 
@@ -73,7 +74,7 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
         this.optionalDefaultKey = defaultKey;
         this.maxId = maxIdValue;
         this.minId = minIdValue;
-        this.availabilityMap = new BitSet(maxIdValue + 1);
+        this.availabilityMap = new BitSet(Math.min(maxIdValue + 1, 0xFFFF)); //No need to pre-allocate large sets, it will resize when we need it.
         this.isDelegated = isDelegated;
         if (this.isDelegated) {
             try {
@@ -89,6 +90,12 @@ public class FMLControlledNamespacedRegistry<I> extends RegistryNamespacedDefaul
     }
 
     void validateContent(ResourceLocation registryName) {
+        try {
+            ReflectionHelper.findMethod(BitSet.class, this.availabilityMap, new String[]{"trimToSize"}).invoke(this.availabilityMap);
+        }  catch (Exception e) {
+            //We don't care... Just a micro-optimization
+        }
+
         for (I obj : typeSafeIterable()) {
             int id = getId(obj);
             ResourceLocation name = getNameForObject(obj);
