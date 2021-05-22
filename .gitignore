@@ -4,7 +4,9 @@
 /.classpath
 
 #In case people make their workspace in the repo
-/eclipse/
+eclipse/
+
+/mdk/eclipse/
 
 #idea
 /.idea
@@ -30,5 +32,5 @@ changelog.txt
 *.py
 *.7z
 
-/run
-/out
+run/
+out/

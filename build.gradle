@@ -61,11 +61,11 @@ processJson {
     releaseJson = "jsons/1.8.9-rel.json"
     addReplacements([
         "@minecraft_version@": project.minecraft.version,
-        "@version@": project.version,
-        "@project@": "forge",
-        "@artifact@": "net.minecraftforge:forge:${project.version}",
-        "@universal_jar@": { outputJar.archiveName },
-        "@timestamp@": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+        "@version@"          : project.version,
+        "@project@"          : "forge",
+        "@artifact@"         : "net.minecraftforge:forge:${project.version}",
+        "@universal_jar@"    : { outputJar.archiveName },
+        "@timestamp@"        : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
     ])
 }
 
@@ -87,16 +87,16 @@ task changelog(type: JenkinsChangelog) {
 
 def extraTxts = [
     changelog, // yeah we can do thi, because gradle and groovy are awesome
-    "LICENSE-fml.txt",
-    "CREDITS-fml.txt",
-    "MinecraftForge-Credits.txt",
-    "MinecraftForge-License.txt",
-    "Paulscode SoundSystem CodecIBXM License.txt",
-    "Paulscode IBXM Library License.txt"
+    "licenses/LICENSE-fml.txt",
+    "licenses/CREDITS-fml.txt",
+    "licenses/MinecraftForge-Credits.txt",
+    "licenses/MinecraftForge-License.txt",
+    "licenses/Paulscode SoundSystem CodecIBXM License.txt",
+    "licenses/Paulscode IBXM Library License.txt"
 ]
 
 outputJar {
-    classifier = 'universal'
+    archiveClassifier.set('universal')
     from extraTxts
 
     manifest.attributes([
@@ -107,7 +107,7 @@ outputJar {
 }
 
 installer {
-    classifier = 'installer'
+    archiveClassifier.set('installer')
     from extraTxts
     from "src/main/resources/forge_logo.png"
     rename "forge_logo\\.png", "big_logo.png"
@@ -128,8 +128,8 @@ task signUniversal(type: SignJar, dependsOn: 'outputJar') {
     storePass = jarsigner.storepass
     keyPass = jarsigner.keypass
     keyStore = jarsigner.keystore
-    inputFile = outputJar.archivePath
-    outputFile = outputJar.archivePath
+    inputFile = outputJar.archiveFile
+    outputFile = outputJar.archiveFile
 }
 
 build.dependsOn signUniversal
@@ -139,13 +139,11 @@ installer.dependsOn signUniversal
 
 import groovy.json.JsonSlurper
 
-String getServerClasspath(File file)
-{
+String getServerClasspath(File file) {
     def node = new JsonSlurper().parse(file)
     def out = new StringBuilder()
     node.versionInfo.libraries.each { lib ->
-        if (lib.serverreq)
-        {
+        if (lib.serverreq) {
             // group : artifact : version
             def split = lib.name.split(':')
             def group = split[0].replace('.', '/')
@@ -159,18 +157,17 @@ String getServerClasspath(File file)
     return out.toString()
 }
 
-String getVersionFromJava(File file)
-{
+@SuppressWarnings('GroovyMissingReturnStatement')
+String getVersionFromJava(File file) {
     String major = "0"
     String minor = "0"
     String revision = "0"
     String build = "0"
 
     String prefix = "public static final int"
-    file.eachLine{ String s ->
+    file.eachLine { String s ->
         s = s.trim()
-        if (s.startsWith(prefix))
-        {
+        if (s.startsWith(prefix)) {
             s = s.substring(prefix.length(), s.length() - 1)
             s = s.replace('=', ' ').replace("Version", "").replaceAll(" +", " ").trim()
             String[] pts = s.split(" ")
@@ -181,19 +178,15 @@ String getVersionFromJava(File file)
         }
     }
 
-    if (System.getenv().containsKey("BUILD_NUMBER"))
-    {
+    if (System.getenv().containsKey("BUILD_NUMBER")) {
         build = System.getenv("BUILD_NUMBER")
     }
 
-    String branch = null
-    if (!System.getenv().containsKey("GIT_BRANCH"))
-    {
+    def branch = null
+    if (!System.getenv().containsKey("GIT_BRANCH")) {
         // TODO: use grgit
         branch = "git rev-parse --abbrev-ref HEAD".execute().text.trim()
-    }
-    else
-    {
+    } else {
         branch = System.getenv("GIT_BRANCH")
         branch = branch.substring(branch.lastIndexOf('/') + 1)
     }
@@ -205,8 +198,3 @@ String getVersionFromJava(File file)
 
     return out
 }
-
-// re-add old tasks for jenkins compat
-// should be remvoed, and the jenkisn fixed when no longer building with FG 1.2
-task setupForge { dependsOn 'setup' }
-task buildPackages { dependsOn 'build' }
