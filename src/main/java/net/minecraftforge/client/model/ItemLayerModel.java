@@ -343,12 +343,17 @@ public class ItemLayerModel implements IRetexturableModel<ItemLayerModel> {
                 throw new IllegalArgumentException("can't handle z-oriented side");
         }
         return buildQuad(
-            format, transform, side.getOpposite(), tint, // getOpposite is related either to the swapping of V direction, or something else
+            format, transform, remap(side), tint,
             x0, y0, z1, sprite.getInterpolatedU(u0), sprite.getInterpolatedV(v0),
             x1, y1, z1, sprite.getInterpolatedU(u1), sprite.getInterpolatedV(v1),
             x1, y1, z2, sprite.getInterpolatedU(u1), sprite.getInterpolatedV(v1),
             x0, y0, z2, sprite.getInterpolatedU(u0), sprite.getInterpolatedV(v0)
         );
+    }
+
+    private static EnumFacing remap(EnumFacing side) {
+        // getOpposite is related to the swapping of V direction
+        return side.getAxis() == EnumFacing.Axis.Y ? side.getOpposite() : side;
     }
 
     private static BakedQuad buildQuad(
