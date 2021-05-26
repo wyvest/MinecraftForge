@@ -19,8 +19,10 @@ import net.minecraftforge.fml.common.MetadataCollection;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModContainerFactory;
 import net.minecraftforge.fml.common.discovery.asm.ASMModParser;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.jar.JarFile;
@@ -37,7 +39,9 @@ public class JarDiscoverer implements ITypeDiscoverer {
             MetadataCollection mc;
             if (modInfo != null) {
                 FMLLog.finer("Located mcmod.info file in file %s", candidate.getModContainer().getName());
-                mc = MetadataCollection.from(jar.getInputStream(modInfo), candidate.getModContainer().getName());
+                try (InputStream inputStream = jar.getInputStream(modInfo)) {
+                    mc = MetadataCollection.from(inputStream, candidate.getModContainer().getName());
+                }
             } else {
                 FMLLog.fine("The mod container %s appears to be missing an mcmod.info file", candidate.getModContainer().getName());
                 mc = MetadataCollection.from(null, "");
@@ -50,7 +54,12 @@ public class JarDiscoverer implements ITypeDiscoverer {
                 if (match.matches()) {
                     ASMModParser modParser;
                     try {
-                        modParser = new ASMModParser(jar.getInputStream(ze));
+                        InputStream inputStream = jar.getInputStream(ze);
+                        try {
+                            modParser = new ASMModParser(inputStream);
+                        } finally {
+                            IOUtils.closeQuietly(inputStream);
+                        }
                         candidate.addClassEntry(ze.getName());
                     } catch (LoaderException e) {
                         FMLLog.log(Level.ERROR, e, "There was a problem reading the entry %s in the jar %s - probably a corrupt zip", ze.getName(), candidate.getModContainer().getPath());

@@ -11,6 +11,7 @@ import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.FMLInjectionData;
+import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -914,18 +915,8 @@ public class Configuration {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if (buffer != null) {
-                try {
-                    buffer.close();
-                } catch (IOException ignored) {
-                }
-            }
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException ignored) {
-                }
-            }
+            IOUtils.closeQuietly(buffer);
+            IOUtils.closeQuietly(input);
         }
 
         resetChangedState();
