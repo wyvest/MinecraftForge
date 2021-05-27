@@ -85,10 +85,6 @@
       "url": "https://repo.maven.apache.org/maven2"
     },
     {
-      "name": "org.jetbrains.kotlin:kotlin-stdlib:1.3.72",
-      "url": "https://repo.maven.apache.org/maven2"
-    },
-    {
       "name": "com.github.ChachyDev:keventbus-forge:dd8d578136",
       "url": "https://jitpack.io/"
     },
