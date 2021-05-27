@@ -34,7 +34,9 @@ public class JarDiscoverer implements ITypeDiscoverer {
     public List<ModContainer> discover(ModCandidate candidate, ASMDataTable table) {
         List<ModContainer> foundMods = Lists.newArrayList();
         FMLLog.fine("Examining file %s for potential mods", candidate.getModContainer().getName());
-        try (JarFile jar = new JarFile(candidate.getModContainer())) {
+        JarFile jar = null;
+        try {
+            jar = new JarFile(candidate.getModContainer());
             ZipEntry modInfo = jar.getEntry("mcmod.info");
             MetadataCollection mc;
             if (modInfo != null) {
@@ -54,11 +56,8 @@ public class JarDiscoverer implements ITypeDiscoverer {
                 if (match.matches()) {
                     ASMModParser modParser;
                     try {
-                        InputStream inputStream = jar.getInputStream(ze);
-                        try {
+                        try (InputStream inputStream = jar.getInputStream(ze)) {
                             modParser = new ASMModParser(inputStream);
-                        } finally {
-                            IOUtils.closeQuietly(inputStream);
                         }
                         candidate.addClassEntry(ze.getName());
                     } catch (LoaderException e) {
@@ -78,6 +77,8 @@ public class JarDiscoverer implements ITypeDiscoverer {
             }
         } catch (Exception e) {
             FMLLog.log(Level.WARN, e, "Zip file %s failed to read properly, it will be ignored", candidate.getModContainer().getName());
+        } finally {
+            IOUtils.closeQuietly(jar);
         }
         return foundMods;
     }
